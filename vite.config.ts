@@ -7,7 +7,7 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 // yarn add --dev @esbuild-plugins/node-modules-polyfill
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 // You don't need to add this to deps, it's included by @esbuild-plugins/node-modules-polyfill
-import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
+// import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 
 export default  defineConfig({
   plugins: [vue(
@@ -15,7 +15,7 @@ export default  defineConfig({
       template: {
         compilerOptions: {
           // treat all tags with a dash as custom elements
-          isCustomElement: (tag) => tag.includes('shaperone')
+          isCustomElement: (tag) => tag.includes('shaperone') || tag.includes('custom')
         }
       }
     }

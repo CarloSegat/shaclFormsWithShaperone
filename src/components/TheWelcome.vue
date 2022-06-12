@@ -1,9 +1,10 @@
 <template>
-  <span>fniorwd wefjnoefjnk</span>
-  <shaperone-form
-    :shapes.prop="shape"
-    :resource.prop="resource"
-  ></shaperone-form>
+  <span>Chill and generate forms with shacl</span>
+  <custom-f
+    .resource="resource"
+    .headerShape="headerShape"
+    .bodyShape="bodyShape"
+  ></custom-f>
 </template>
 
 
@@ -12,52 +13,40 @@
 import '@hydrofoil/shaperone-wc/shaperone-form'
 import clownface, { AnyPointer, GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
-import stringToStream from 'string-to-stream'
 import { dataset, blankNode } from '@rdf-esm/dataset'
 import { sh, rdf } from '@tpluscode/rdf-ns-builders'
-import {triples} from '../assets/shapes'
+import {headerShape, swShape} from '../assets/shapes'
+import { generateQuads } from '../quadsGenerator'
+import {ns} from '../namespaces'
+
 
 export default {
     name: 'TheWelcome',
     data(){
       return {
-        ptr: null as any,
         resource: null as any,
         shapes: null as any,
-        shape: null as any
+        headerShape: null as any,
+        bodyShape: null as any
       }
     },
     async beforeCreate() {
-      const { parsers } = await import('@rdfjs-elements/formats-pretty')
+      let strShapes = swShape.toString();
+      let quads = await generateQuads(strShapes)
+      // console.log("quads: ", quads);
+      let ptr = clownface({ dataset: $rdf.dataset(quads) })
+      this.bodyShape = ptr.namedNode(ns.cfrl.SoftwareShape)
 
-    let strShapes = triples.toString();
-
-      const inputStream = stringToStream(strShapes)
-      const quads = []
-      const prefixes = {}
-
-      const quadStream = parsers.import("text/turtle", inputStream)
-      if (!quadStream) {
-        console.log("quadStream was null, something bad happened");
-      }
-      if(quadStream !== null){
-        for await (const quad of quadStream) {
-          quads.push(quad)
-        }
-      }
-  
-    console.log("quads: ", quads);
-    this.ptr = clownface({ dataset: $rdf.dataset(quads) })
-    this.shapes = this.ptr.has(rdf.type, [sh.Shape, sh.NodeShape]).toArray()
-    console.log("this.shapes.toArray()", this.shapes)
-    this.shape = this.shapes[1]
-    console.log("terms.length: ", this.ptr.terms.length);
-    console.log("term: ", this.ptr.term);
-    console.log("value: ", this.ptr.value);
-    console.log("values.length: ", this.ptr.values.length);
-    //let pointer = clownface({ dataset: $rdf.dataset(quads) })
-
-    this.resource = clownface({dataset: dataset(), }).blankNode()
+      strShapes = headerShape.toString();
+      quads = await generateQuads(strShapes)
+      // console.log("quads: ", quads);
+      ptr = clownface({ dataset: $rdf.dataset(quads) })
+      this.headerShape = ptr.namedNode(ns.cfrl.HeaderShape)
+      
+      this.resource = clownface({dataset: dataset(), })
+        .namedNode("http://hello/world")
+        .addOut(ns.cfrl.body, ns.cfrl.testBody)
+        .addOut(ns.cfrl.header, ns.cfrl.testHeader)
   }
 }
 </script>
