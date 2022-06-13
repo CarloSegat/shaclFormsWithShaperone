@@ -1,9 +1,8 @@
 <template>
-  <span>Chill and generate forms with shacl</span>
   <custom-f
-    .resource="resource"
     .headerShape="headerShape"
     .bodyShape="bodyShape"
+    @cefriel-form-submitted="tempCallback"
   ></custom-f>
 </template>
 
@@ -18,10 +17,17 @@ import { sh, rdf } from '@tpluscode/rdf-ns-builders'
 import {headerShape, swShape} from '../assets/shapes'
 import { generateQuads } from '../quadsGenerator'
 import {ns} from '../namespaces'
-
+import fetch from '@rdfjs/fetch'
+import { onMounted } from '@vue/runtime-core'
 
 export default {
-    name: 'TheWelcome',
+    name: 'create-new',
+    methods: {
+      tempCallback: function(e: any){
+        // console.log("emitted: ",);
+        this.$emit('form-submitted', e.detail['data'], 'sw-creation')
+      }
+    },
     data(){
       return {
         resource: null as any,
@@ -31,6 +37,7 @@ export default {
       }
     },
     async beforeCreate() {
+      // in create new I don't need to 
       let strShapes = swShape.toString();
       let quads = await generateQuads(strShapes)
       // console.log("quads: ", quads);
@@ -42,11 +49,17 @@ export default {
       // console.log("quads: ", quads);
       ptr = clownface({ dataset: $rdf.dataset(quads) })
       this.headerShape = ptr.namedNode(ns.cfrl.HeaderShape)
-      
-      this.resource = clownface({dataset: dataset(), })
-        .namedNode("http://hello/world")
-        .addOut(ns.cfrl.body, ns.cfrl.testBody)
-        .addOut(ns.cfrl.header, ns.cfrl.testHeader)
-  }
+
+
+      const res = await fetch('http://localhost:3001/shape/swShape')
+      const resok = await fetch('https://zazuko.github.io/tbbt-ld/dist/tbbt.nq')
+      console.log("res:", res)
+      // console.log("res:", resok)
+      const dataset = await res.dataset()
+
+      for (const quad of dataset) {
+        console.log(`${quad.subject.value} ${quad.predicate.value} ${quad.object.value}`)
+      }
+  },
 }
 </script>

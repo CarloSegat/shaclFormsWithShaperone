@@ -1,0 +1,43 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+          @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+          @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+          @prefix dash: <http://datashapes.org/dash#> .
+          @prefix dcat: <http://www.w3.org/ns/dcat#> .
+          @prefix dct: <http://purl.org/dc/terms/> .
+          @prefix cfrl: <http://www.cefriel.com/shacl-forms#> .
+          @prefix schema: <http://schema.org/> .
+          
+          cfrl:HeaderShape
+            a sh:NodeShape ;
+            sh:targetClass dcat:Dataset ;
+            rdfs:label "Header shape" ;
+            sh:property
+              cfrl:DctTitleProperty ,
+              cfrl:DctDescProperty ,
+              cfrl:DctTypeProperty .
+          
+          # description
+          cfrl:DctDescProperty
+              sh:path dct:description ;
+              sh:name "Description" ;
+              sh:datatype xsd:string ;
+              dash:singleLine true ;
+              sh:maxCount 1 ;
+              sh:minCount 1 .
+          
+          # title
+          cfrl:DctTitleProperty
+              sh:path dct:title ;
+              sh:name "Title" ;
+              sh:datatype xsd:string ;
+              dash:singleLine true ;
+              sh:maxCount 1 ;
+              sh:minCount 1 .
+          
+          # type
+          cfrl:DctTypeProperty
+              sh:path dct:type ;
+              sh:name "Dct type" ;
+              sh:datatype xsd:anyURI ;
+              sh:in ("http://data.europa.eu/dr8/PublicPolicy" "http://data.europa.eu/dr8/PublicPolicyImplementationApproach") ;
+              sh:maxCount 1 .
