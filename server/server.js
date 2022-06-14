@@ -11,10 +11,10 @@ app.get('/header-shape', (req, res) => {
 })
 
 app.get('/shape/:filename', (req, res) => {
-    if(!fs.existsSync(`./rdf/${req.params.filename}.ttl`)){
-        res.send('Requested file doesnt exist')
+    if(!fs.existsSync(`./shapes/${req.params.filename}.ttl`)){
+        res.send('Requested shape file doesnt exist')
     } else {
-        fs.readFile(`./rdf/${req.params.filename}.ttl`, (err, data) => {
+        fs.readFile(`./shapes/${req.params.filename}.ttl`, (err, data) => {
             // console.log("data:", data)
             // console.log("data:", String(data))
             res.setHeader('content-type', 'text/turtle');
@@ -22,6 +22,19 @@ app.get('/shape/:filename', (req, res) => {
         })
     }
   })
+
+app.get('/rdf/:filename', (req, res) => {
+  if(!fs.existsSync(`./rdf/${req.params.filename}.ttl`)){
+      res.send('Requested rdf file doesnt exist')
+  } else {
+      fs.readFile(`./rdf/${req.params.filename}.ttl`, (err, data) => {
+          // console.log("data:", data)
+          // console.log("data:", String(data))
+          res.setHeader('content-type', 'text/turtle');
+          res.send(String(data))
+      })
+  }
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

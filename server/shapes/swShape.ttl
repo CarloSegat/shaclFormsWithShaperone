@@ -12,8 +12,9 @@ cfrl:SoftwareShape
     sh:targetClass cfrl:SoftwareAsset ;
     rdfs:label "A piece of software" ;
     sh:property
-    cfrl:SchemaNameProperty ,
-    cfrl:SchemaDatePublished .
+        cfrl:SchemaNameProperty ,
+        cfrl:SchemaDatePublished ,
+        cfrl:DctDescProperty .
 
 # name
 cfrl:SchemaNameProperty
@@ -58,3 +59,12 @@ cfrl:OwnerShape
     sh:property
     cfrl:SchemaNameProperty ,
     cfrl:ContactProperty .
+
+# description
+cfrl:DctDescProperty
+    sh:path dct:description ;
+    sh:name "Description" ;
+    sh:datatype xsd:string ;
+    dash:singleLine true ;
+    sh:maxCount 1 ;
+    sh:minCount 1 .

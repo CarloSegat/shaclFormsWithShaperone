@@ -41,9 +41,9 @@ export const headerShape = turtle`
           cfrl:DctTypeProperty
               sh:path dct:type ;
               sh:name "Dct type" ;
-              sh:datatype xsd:anyURI ;
-              sh:in ("http://data.europa.eu/dr8/PublicPolicy" "http://data.europa.eu/dr8/PublicPolicyImplementationApproach") ;
-              sh:maxCount 1 .
+              dash:editor dash:InstancesSelectEditor ;
+              sh:class cfrl:AssetType ;
+              sh:minCount 1 .
         `
 
 export const swShape = turtle`
@@ -62,6 +62,7 @@ export const swShape = turtle`
           rdfs:label "A piece of software" ;
           sh:property
             cfrl:SchemaNameProperty ,
+            cfrl:DctDescProperty ,
             cfrl:SchemaDatePublished .
 
         # name
@@ -107,5 +108,14 @@ export const swShape = turtle`
           sh:property
             cfrl:SchemaNameProperty ,
             cfrl:ContactProperty .
+
+        # description
+        cfrl:DctDescProperty
+            sh:path dct:description ;
+            sh:name "Description" ;
+            sh:datatype xsd:string ;
+            dash:singleLine true ;
+            sh:maxCount 1 ;
+            sh:minCount 1 .
       `
 
