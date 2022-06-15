@@ -1,5 +1,7 @@
 <template>
   <custom-f
+    .readonly="true"
+    .resource="resource"
     .headerShape="headerShape"
     .bodyShape="bodyShape"
     .instancesURL="['http://localhost:3001/rdf/assetTypes']"
@@ -9,21 +11,28 @@
 
 <script lang="ts">
 import '@hydrofoil/shaperone-wc/shaperone-form'
-import { fetchShape } from '../quadsGenerator'
+import { fetchRDFWithURL, fetchShape } from '../quadsGenerator'
 import {ns} from '../namespaces'
+import clownface, { AnyPointer, GraphPointer } from 'clownface'
+import { turtle } from '@tpluscode/rdf-string'
 
 export default {
-    name: 'create-new',
+    name: 'visualise-rdf',
     methods: {
       emitSubmissionEvent: function(e: any){
-        this.$emit('form-submitted', e.detail['data'], 'sw-creation')
+        this.$emit('form-submitted', e.detail['data'], 'sw-edit')
       }
     },
     data(){
       return {
+        resource: {} as AnyPointer,
         headerShape: null as any,
         bodyShape: null as any
       }
+    },
+    updated() {
+      const sss = turtle`${this.resource?.dataset}`.toString();
+      this.emitSubmissionEvent({detail: {data: sss}});
     },
     async beforeCreate() {
       const swShape = await fetchShape("swShape");
@@ -31,6 +40,8 @@ export default {
 
       let headerShape = await fetchShape("headerShape");
       this.headerShape = headerShape.namedNode(ns.cfrl.HeaderShape)
+
+      this.resource = await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample")
   },
 }
 </script>

@@ -6,10 +6,6 @@ app.use(cors())
 
 const port = 3001
 
-app.get('/header-shape', (req, res) => {
-  res.send('Hello World!')
-})
-
 app.get('/shape/:filename', (req, res) => {
     if(!fs.existsSync(`./shapes/${req.params.filename}.ttl`)){
         res.send('Requested shape file doesnt exist')

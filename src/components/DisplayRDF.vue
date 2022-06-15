@@ -13,7 +13,6 @@ import clownface, { AnyPointer, GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 import { dataset, blankNode } from '@rdf-esm/dataset'
 import { sh, rdf } from '@tpluscode/rdf-ns-builders'
-import {headerShape, swShape} from '../assets/shapes'
 import { generateQuads } from '../quadsGenerator'
 import {ns} from '../namespaces'
 import fetch from '@rdfjs/fetch'
@@ -32,6 +31,7 @@ export default {
 </script>
 
 <style scoped>
+@import '../assets/base.css';
   .divtext {
     border: ridge 2px;
     padding: 2px;

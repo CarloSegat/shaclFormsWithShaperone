@@ -72,3 +72,27 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* custo */
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+a:visited {
+  color: initial
+}
+a:active {
+  color: darkcyan;
+}
+h1 {
+  display: inline;
+  font-weight: bold;
+  background-color: rgb(16, 87, 87);
+  color: hsl(0, 0%, 100%);
+  padding: 0.5rem;
+}
+h2 {
+  color: #222222;
+}

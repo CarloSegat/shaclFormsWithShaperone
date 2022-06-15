@@ -25,7 +25,7 @@ export class SimpleGreeting extends LitElement {
   `;
 
   @property({ type: Object })
-  resource?: AnyPointer
+  resource?: AnyPointer = this.defaultResource();
 
   @property()
   headerShape!: AnyPointer;
@@ -41,9 +41,6 @@ export class SimpleGreeting extends LitElement {
   @property()
   propConflictStrategy: string = "keep-header"; // ignore
   // END DEFAULTED CONFIGS 
-
-  @property() // TODO: JUST CREATE A NAMEDnODE WHEN INITIALISING
-  iriNewResource: any = new NamedNode(ns.cfrl.newResource.value.toString() + "/" + Math.floor(Math.random() * 999999));
 
   @state()
   renderMode?: string
@@ -67,6 +64,7 @@ export class SimpleGreeting extends LitElement {
   }
 
   protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    if(this.readonly) this.makeAllPropertiesReadonly();
     this.instancesURL.forEach(async url => {
       const res = await rdfFetch(url)
       // const streamm = res.quadStream().
@@ -81,20 +79,23 @@ export class SimpleGreeting extends LitElement {
       console.log("this.headerShape: ", this.headerShape);
       
     });
-    if(! this.resource) { // TODO better default for resource
-      // create empty resource
-      this.resource = clownface({dataset: dataset(), })
-      .namedNode(ns.cfrl.test121346789)
-      this.resource
-        .addOut(ns.cfrl.body, this.resource.blankNode())
-        .addOut(ns.cfrl.header,  this.resource.blankNode())
-    }
 
     this.b = this.resource?.out(ns.cfrl.body)
     this.h = this.resource?.out(ns.cfrl.header)
 
     this.detectPropConflict()
+    
 
+  }
+
+  private makeAllPropertiesReadonly() {
+    this.headerShape
+      .out(ns.sh.property)
+      .addOut(ns.dash.readOnly, true)
+
+   this.bodyShape
+      .out(ns.sh.property)
+      .addOut(ns.dash.readOnly, true)
   }
   // Render the UI as a function of component state
   render() {
@@ -104,22 +105,24 @@ export class SimpleGreeting extends LitElement {
     //this.printRDF(this.bodyShape, "bodyy shapee:")
     
     return html`
+    <style></style>
+       
+      <shaperone-form
+        id="header-form"
+        .shapes=${this.headerShape}
+        .resource=${this.h}
+      ></shaperone-form>
 
-    <shaperone-form
-      id="header-form"
-      .shapes=${this.headerShape}
-      .resource=${this.h}
-    ></shaperone-form>
-
-    <shaperone-form
-      id="body-form"
-      .shapes=${this.bodyShape}
-      .resource=${this.b}
-    ></shaperone-form>
+      <shaperone-form
+        id="body-form"
+        .shapes=${this.bodyShape}
+        .resource=${this.b}
+      ></shaperone-form>
     
-    <button
-      @click="${this.produceOutput}">Submit
-    </button>
+      <button
+        @click="${this.produceOutput}">Submit
+      </button>
+    
     `;
   }
 
@@ -164,6 +167,17 @@ export class SimpleGreeting extends LitElement {
     } else {
       console.error("Invalid propConflictStrategy")
     }
+  }
+
+  private defaultResource() : AnyPointer {
+    let result = clownface({dataset: dataset()})
+    .namedNode(ns.cfrl.newResource.value.toString() + "/" + Math.floor(Math.random() * 999999))
+    
+    result
+        .addOut(ns.cfrl.body, result.blankNode())
+        .addOut(ns.cfrl.header, result.blankNode())
+
+    return result
   }
 
 }
