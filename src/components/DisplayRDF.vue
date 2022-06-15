@@ -1,7 +1,9 @@
 <template>
-  <div
-    class="divtext"
-    contenteditable >{{rdfdata}}</div>
+  <rdf-editor id="resourceEditor" 
+    prefixes="sh,dash,rdfs"
+    .value="rdfdata"
+    format="text/turtle">
+  </rdf-editor>
 </template>
 
 <script lang="js">
@@ -16,6 +18,7 @@ import { generateQuads } from '../quadsGenerator'
 import {ns} from '../namespaces'
 import fetch from '@rdfjs/fetch'
 import { ref } from 'vue'
+import '@rdfjs-elements/rdf-editor'
 
 export default {
     name: 'display-rdf',
