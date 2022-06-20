@@ -13,6 +13,7 @@ rdfs:label "Header shape" ;
 sh:property
     cfrl:DctTitleProperty ,
     cfrl:DctDescProperty ,
+    cfrl:OptionalProperty ,
     cfrl:DctTypeProperty .
 
 # description
@@ -23,6 +24,14 @@ cfrl:DctDescProperty
     dash:singleLine true ;
     sh:maxCount 1 ;
     sh:minCount 1 .
+
+# optional property
+cfrl:OptionalProperty
+    sh:path cfrl:optionalProperty ;
+    sh:name "Optional Prop" ;
+    sh:datatype xsd:string ;
+    dash:singleLine true .
+
 
 # title
 cfrl:DctTitleProperty
