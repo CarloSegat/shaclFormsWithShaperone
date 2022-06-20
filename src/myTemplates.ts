@@ -48,15 +48,14 @@ export const myTemplate = {
     },
     group(renderer, { properties }) {
         const { actions } = renderer
-        console.log("what actions do I have defined? ", actions); // yes
-        console.log("what does property contain? ", properties);
-        console.log("renderer? ", renderer);
+        // console.log("what actions do I have defined? ", actions); // yes
+        // console.log("what does property contain? ", properties);
+        // console.log("renderer? ", renderer);
         // console.log(" renderer.Property.canRemove? ",  renderer.Property.canRemove); 
         let canREmove = renderer.property && actions.remove && renderer.property.canRemove;
         const removeRow = canREmove ? html`
         <div>
             <button 
-               
                 @click="${(e) => {
                 e.preventDefault();
                 actions.remove()
@@ -77,8 +76,8 @@ export const myTemplate = {
         // the second property contains children
         // render property is like "this property"
         const { actions } = renderer
-        console.log("what actions do I have defined? ", actions); // yes
-        console.log("what does property contain? ", property);
+        // console.log("what actions do I have defined? ", actions); // yes
+        // console.log("what does property contain? ", property);
         console.log("renderer? ", renderer);
 
         // TODO the add button should not be repeated for each element added 
@@ -91,7 +90,12 @@ export const myTemplate = {
                 </div>`
             : html``
 
-        return html`${repeat(property.objects, object => html`
+        console.log("property.objects: ", property.objects);
+        
+
+        return html`
+        ${addRow}
+        ${repeat(property.objects, object => html`
         <style>
            select {
             display: inline !important;
@@ -101,16 +105,29 @@ export const myTemplate = {
         </style>
         <div class="field">
             <label for="${property.shape.id.value}">${taggedLiteral(property.shape, { property: sh.name })}</label>
-            ${addRow}
             ${renderer.renderObject({ object })}
             
         </div>`)}`;
     },
     object(renderer) {
-        return html`${renderer.renderEditor()}`
+        const { actions } = renderer
+        let canREmove = renderer.property && actions.remove && renderer.property.canRemove;
+        const removeRow = canREmove ? html`
+        <div>
+            <button 
+                @click="${(e) => {
+                e.preventDefault();
+                actions.remove()
+            }}" 
+                title="Remove value">
+                Remove
+            </button>
+        </div>`
+            : html``
         return html`
         <div>
             ${renderer.renderEditor()}
+            ${removeRow}
         </div>
         `;
     },
