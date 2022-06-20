@@ -30,6 +30,7 @@ cfrl:DctTitleProperty
     sh:name "Title" ;
     sh:datatype xsd:string ;
     dash:singleLine true ;
+    sh:pattern "[0-9][0-9][0-9][0-9]" ;
     sh:maxCount 1 ;
     sh:minCount 1 .
 
@@ -37,6 +38,7 @@ cfrl:DctTitleProperty
 cfrl:DctTypeProperty
     sh:path dct:type ;
     sh:name "Dct type" ;
-    sh:datatype xsd:anyURI ;
-    sh:in ("http://data.europa.eu/dr8/PublicPolicy" "http://data.europa.eu/dr8/PublicPolicyImplementationApproach") ;
-    sh:minCount 1 .
+    dash:editor dash:InstancesSelectEditor ;
+    sh:class cfrl:AssetType ;
+    sh:minCount 1 ;
+    sh:maxCount 1 .

@@ -1,19 +1,25 @@
 import { LitElement, css, html, type PropertyValueMap } from 'lit';
 import { customElement, property, state, query } from 'lit/decorators.js';
 import '@hydrofoil/shaperone-wc/shaperone-form'
-import $rdf from 'rdf-ext'
 import { dataset, blankNode } from '@rdf-esm/dataset'
-import { sh, rdf } from '@tpluscode/rdf-ns-builders'
-import { fetchRDFWithURL, generateQuads } from './quadsGenerator'
 import { ns } from './namespaces'
 import { turtle } from '@tpluscode/rdf-string'
 import type { ShaperoneForm } from '@hydrofoil/shaperone-wc';
 import clownface, { AnyPointer, GraphPointer, AnyContext } from 'clownface'
 import type DatasetExt from 'rdf-ext/lib/Dataset';
 import NamedNode from 'rdf-ext/lib/NamedNode';
-import { xsd, schema }from '@tpluscode/rdf-ns-builders';
 import rdfFetch from '@rdfjs/fetch'
-
+// import type { component, editor, rendere } from '@hydrofoil/shaperone-wc/configure' 
+import { components, editors, renderer, validation } from '@hydrofoil/shaperone-wc/configure' 
+import { nestedForm } from './InlineNestedShapes'
+import { myTemplate } from './myTemplates'
+import { literal, namedNode } from '@rdf-esm/data-model';
+import { repeat } from 'lit/directives/repeat.js';
+import { xsd } from '@tpluscode/rdf-ns-builders';
+import { getType } from '@hydrofoil/shaperone-wc/components/lib/textFieldType';
+import { validity } from '@hydrofoil/shaperone-wc/components/validity';
+import { readOnly } from '@hydrofoil/shaperone-wc/components/readonly';
+import { validate } from '@hydrofoil/shaperone-rdf-validate-shacl'
 
 @customElement('custom-f')
 export class SimpleGreeting extends LitElement {
@@ -21,6 +27,9 @@ export class SimpleGreeting extends LitElement {
   static styles = css`
     :host {
       color: black;
+    }
+    shaperone-form::part(invalid) {
+      border-color: red;
     }
   `;
 
@@ -34,16 +43,13 @@ export class SimpleGreeting extends LitElement {
   bodyShape!: any;
   
   // DEFAULTED CONFIGS 
-  @property()
+  @property({reflect: true})
   readonly: boolean = false;
   @property()
   instancesURL: string[] = [];
   @property()
   propConflictStrategy: string = "keep-header"; // ignore
   // END DEFAULTED CONFIGS 
-
-  @state()
-  renderMode?: string
 
   @state()
   h?: AnyPointer
@@ -63,8 +69,42 @@ export class SimpleGreeting extends LitElement {
     // return true
   }
 
-  protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    if(this.readonly) this.makeAllPropertiesReadonly();
+  protected async willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
+    // const nestingComponents = await import('./InlineNestedShapes')
+    // editors.decorate(instancesSelector.matcher)
+    // components.decorate(instancesSelector.decorator({ client: Hydra }))
+    components.pushComponents({nestedForm})
+    renderer.setTemplates(myTemplate)
+    validation.setValidator(validate)
+
+
+  // TODO IMPLEMENT SOMETHING THAT RENDERS A TEXT FIELD
+  // LOOK AT TODO_STYLE IN DOCUMENT TESI
+
+  // OLD CODE BELOW
+//   textField: function ({ property, value }, { update }) {
+//     var _a;
+//     console.log("THIS IS WORKING 9999999999999999999999999%");
+//     return html `
+//         <style>
+//             input {
+//                 background-color: orange;
+//             }
+//         </style>
+//         <input 
+//             .value="${((_a = value.object) === null || _a === void 0 ? void 0 : _a.value) || ''}"
+//                 type="${getType(property.datatype)}"
+//                 ${validity(value)}
+//                 ${readOnly(property)}
+//                 @blur="${(e) => update(e.target.value)}">`;
+// }
+
+
+    console.log("components: ", components);
+    
+    if(this.readonly) {
+      this.makeAllPropertiesReadonly();
+    }
     this.instancesURL.forEach(async url => {
       const res = await rdfFetch(url)
       // const streamm = res.quadStream().
@@ -72,9 +112,10 @@ export class SimpleGreeting extends LitElement {
       console.log("fetched rdf response: ", res);
 
       for (const quad of dd) {
-        console.log("adding quad: ", quad);
-        
+        //console.log("adding quad: ", quad);
         this.headerShape.dataset.add(quad)
+        // TODO add ody
+        // this.headerShape.dataset.add(quad)
       } 
       console.log("this.headerShape: ", this.headerShape);
       
@@ -89,6 +130,8 @@ export class SimpleGreeting extends LitElement {
   }
 
   private makeAllPropertiesReadonly() {
+    console.log("makeAllPropertiesReadonly");
+    
     this.headerShape
       .out(ns.sh.property)
       .addOut(ns.dash.readOnly, true)
@@ -100,21 +143,17 @@ export class SimpleGreeting extends LitElement {
   // Render the UI as a function of component state
   render() {
     
-    // console.log("> body ", this.bodyShape);
-    // console.log("> header ", this.headerShape);
-    //this.printRDF(this.bodyShape, "bodyy shapee:")
-    
     return html`
     <style></style>
        
       <shaperone-form
-        id="header-form"
+        .id=${'header-form'}
         .shapes=${this.headerShape}
         .resource=${this.h}
       ></shaperone-form>
 
       <shaperone-form
-        id="body-form"
+        .id=${'body-form'}
         .shapes=${this.bodyShape}
         .resource=${this.b}
       ></shaperone-form>
@@ -127,7 +166,9 @@ export class SimpleGreeting extends LitElement {
   }
 
   produceOutput() {
-    this.printRDF(this.resource, "resource")
+    // this.headerForm.validate()
+    console.log("this.headerForm.isValid", this.headerForm.isValid)
+    console.log("this.headerForm.validationResults", this.headerForm.validationResults)
     const event = new CustomEvent('cefriel-form-submitted', {
       detail: {
         data: turtle`${this.resource?.dataset}`.toString()

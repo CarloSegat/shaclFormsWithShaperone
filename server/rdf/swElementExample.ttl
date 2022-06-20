@@ -2,7 +2,7 @@
 @prefix schema: <http://schema.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://www.cefriel.com/shacl-forms#test121346789>
+<http://www.cefriel.com/mario>
    <http://www.cefriel.com/shacl-forms#body> _:b1 ;
    <http://www.cefriel.com/shacl-forms#header> _:b2 .
 _:b2

@@ -6,7 +6,11 @@
     <div class="item-grid-left">
       <h2>Software Element - Creation</h2>
       <div style="padding: 0.25rem">
-         <CreateNew @form-submitted="setDataFromForm"/>
+         <CreateNew
+          :outputKey="'sw-creation'"
+          :headerShape="headerShapeCreation"
+          :bodyShape="bodyShapeCreation"
+          @form-submitted="setDataFromForm"/>
       </div>
     </div>
     <div class="item-grid-right">
@@ -21,7 +25,12 @@
     <div class="item-grid-left">
        <h2>Software Element - Edit</h2>
        <div style="padding: 0.25rem">
-         <EditRDF  @form-submitted="setDataFromForm"/>
+         <EditRDF  
+            :outputKey="'sw-edit'"
+            :headerShape="headerShapeEdit"
+            :bodyShape="bodyShapeEdit"
+            :resource="resourceEdit"
+            @form-submitted="setDataFromForm"/>
       </div>
     </div>
     <div class="item-grid-right">
@@ -36,7 +45,12 @@
     <div class="item-grid-left">
       <h2>Software Element - Visualisation</h2>
       <div style="padding: 0.25rem">
-         <Visualisation  @form-submitted="setDataFromForm"/>
+         <Visualisation
+          :outputKey="'sw-creation'"
+          :headerShape="headerShapeVisualisation"
+          :bodyShape="bodyShapeVisualisation"
+          :resource="resourceVisualisation"
+         />
       </div>
     </div>
     <div class="item-grid-right">
@@ -55,17 +69,49 @@ import CreateNew from '../components/CreateNew.vue'
 import DisplayRDF from '../components/DisplayRDF.vue'
 import EditRDF from '../components/EditRDF.vue'
 import Visualisation from '../components/Visualisation.vue'
+import { ns } from '@/namespaces'
+import { fetchRDFWithURL, fetchShape } from '@/quadsGenerator'
 
 export default {
     name: 'Sw',
     components: { CreateNew, DisplayRDF, EditRDF, Visualisation },
     data() {
       return {
+        headerShapeCreation: null as any,
+        bodyShapeCreation: null as any,
+
+        headerShapeEdit: null as any,
+        bodyShapeEdit: null as any,
+        resourceEdit: null as any,
+
+        headerShapeVisualisation: null as any,
+        bodyShapeVisualisation: null as any,
+        resourceVisualisation: null as any,
         dataMap : {
           'sw-creation': "",
           'sw-edit': ""
         } as  { [k: string]: string },
       }
+    },
+    async created() {
+      let swShape = await fetchShape("swShape");
+      this.bodyShapeCreation = swShape.namedNode(ns.cfrl.SoftwareShape)
+      swShape = await fetchShape("swShape");
+      this.bodyShapeVisualisation = swShape.namedNode(ns.cfrl.SoftwareShape)
+      swShape = await fetchShape("swShape");
+      this.bodyShapeEdit = swShape.namedNode(ns.cfrl.SoftwareShape)
+
+      console.log("this.bodyShapeCreation === this.bodyShapeEdit", this.bodyShapeCreation === this.bodyShapeEdit)
+
+      let headerShape = await fetchShape("headerShape");
+      this.headerShapeCreation = headerShape.namedNode(ns.cfrl.HeaderShape)
+      headerShape = await fetchShape("headerShape");
+      this.headerShapeVisualisation = headerShape.namedNode(ns.cfrl.HeaderShape)
+      headerShape = await fetchShape("headerShape");
+      this.headerShapeEdit = headerShape.namedNode(ns.cfrl.HeaderShape)
+
+      this.resourceEdit = await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample")
+      this.resourceVisualisation = await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample")
     },
     methods: {
       setDataFromForm: function(data: string, id: string){

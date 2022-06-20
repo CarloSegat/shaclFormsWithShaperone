@@ -16,21 +16,15 @@ export default {
     name: 'create-new',
     methods: {
       emitSubmissionEvent: function(e: any){
-        this.$emit('form-submitted', e.detail['data'], 'sw-creation')
+        console.log("ehi yo  yo yo yoy yo", e.detail['data'], this.outputKey);
+        
+        this.$emit('form-submitted', e.detail['data'], this.outputKey)
       }
     },
-    data(){
-      return {
-        headerShape: null as any,
-        bodyShape: null as any
-      }
+    props: {
+      headerShape: null as any,
+      bodyShape: null as any,
+      outputKey: null as any,
     },
-    async beforeCreate() {
-      const swShape = await fetchShape("swShape");
-      this.bodyShape = swShape.namedNode(ns.cfrl.SoftwareShape)
-
-      let headerShape = await fetchShape("headerShape");
-      this.headerShape = headerShape.namedNode(ns.cfrl.HeaderShape)
-  },
 }
 </script>

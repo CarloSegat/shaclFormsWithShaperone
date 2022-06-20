@@ -4,8 +4,8 @@ const { parsers } = await import('@rdfjs-elements/formats-pretty')
 import rdfFetch from '@rdfjs/fetch'
 import clownface, { AnyPointer, GraphPointer } from 'clownface'
 import type { RdfFetchResponse, DatasetResponse } from '@rdfjs/fetch-lite';
-import type { DatasetCore } from 'rdf-js';
-import { dataset } from '@rdf-esm/dataset'
+import { dataset, DatasetCore } from '@rdfjs/dataset'
+import { ns } from './namespaces'
 
 export async function fetchShape(shapeName: string) {
     const res: DatasetResponse<DatasetCore> = await rdfFetch('http://localhost:3001/shape/' + shapeName)
@@ -19,6 +19,17 @@ export async function fetchRDFWithURL(url: string) {
     const dd = await res.dataset()
     console.log("fetched RDF: ", dd)
     return clownface({ dataset: dd })
+}
+
+async function exampleHowToUseMatch(){
+    const res: DatasetResponse<DatasetCore> = await rdfFetch(url)
+    const dd = await res.dataset()
+    let mmm = dd.match(null, null, ns.sh.NodeShape)
+    console.log("444", mmm)
+    console.log("555", Array.from(mmm))
+    
+    
+    mmm[Symbol.iterator]()
 }
 
 export async function generateQuads(strShapes: string) : Promise<Quad[]> {

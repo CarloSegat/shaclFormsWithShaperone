@@ -19,28 +19,18 @@ export default {
     name: 'edit-rdf',
     methods: {
       emitSubmissionEvent: function(e: any){
-        this.$emit('form-submitted', e.detail['data'], 'sw-edit')
+        this.$emit('form-submitted', e.detail['data'], this.outputKey)
       }
     },
-    data(){
-      return {
-        resource: {} as AnyPointer,
-        headerShape: null as any,
-        bodyShape: null as any
-      }
+    props: {
+      headerShape: null as any,
+      bodyShape: null as any,
+      resource: null as any,
+      outputKey: null as any,
     },
     updated() {
-      const sss = turtle`${this.resource?.dataset}`.toString();
-      this.emitSubmissionEvent({detail: {data: sss}});
-    },
-    async beforeCreate() {
-      const swShape = await fetchShape("swShape");
-      this.bodyShape = swShape.namedNode(ns.cfrl.SoftwareShape)
-
-      let headerShape = await fetchShape("headerShape");
-      this.headerShape = headerShape.namedNode(ns.cfrl.HeaderShape)
-
-      this.resource = await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample")
-  },
+      const serialisedResource = turtle`${this.resource?.dataset}`.toString();
+      this.emitSubmissionEvent({detail: {data: serialisedResource}});
+    }
 }
 </script>

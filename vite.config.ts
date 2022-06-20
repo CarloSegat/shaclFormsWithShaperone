@@ -19,7 +19,11 @@ export default  defineConfig({
         }
       }
     }
-  )],
+  ),
+  NodeGlobalsPolyfillPlugin({
+    process: true,
+    buffer: true
+  })],
     
   resolve: {
     alias: {
@@ -45,6 +49,10 @@ export default  defineConfig({
     build: {
         rollupOptions: {
             plugins: [
+              NodeGlobalsPolyfillPlugin({
+                process: true,
+                buffer: true
+              })
                 // Enable rollup polyfills plugin
                 // used during production bundling
                 //rollupNodePolyFill()
