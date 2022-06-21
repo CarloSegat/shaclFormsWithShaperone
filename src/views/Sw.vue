@@ -4,7 +4,7 @@
 
     <!-- first row  -->
     <div class="item-grid-left">
-      <h2>Software Element - Creation</h2>
+      <h2>Software Element - Creation & Editing</h2>
       <div style="padding: 0.25rem">
          <CreateNew
           :outputKey="'sw-creation'"

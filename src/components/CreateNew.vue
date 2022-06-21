@@ -21,6 +21,11 @@ export default {
         this.$emit('form-submitted', e.detail['data'], this.outputKey)
       }
     },
+    data(){
+      return {
+        customNamespace: ns.cfrl.shallallawo
+      }
+    },
     props: {
       headerShape: null as any,
       bodyShape: null as any,

@@ -4,7 +4,7 @@
 
     <!-- first row  -->
     <div class="item-grid-left">
-      <h2>Machine Learning Model - Creation</h2>
+      <h2>Machine Learning Model - Creation & Editing</h2>
       <div style="padding: 0.25rem">
          <CreateNew
           :outputKey="'ml-creation'"
