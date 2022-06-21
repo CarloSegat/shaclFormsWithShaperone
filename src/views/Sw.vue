@@ -20,27 +20,6 @@
       </div>
     </div>
 
-
-    <!-- 2nd row -->
-    <div class="item-grid-left">
-       <h2>Software Element - Edit</h2>
-       <div style="padding: 0.25rem">
-         <EditRDF  
-            :outputKey="'sw-edit'"
-            :headerShape="headerShapeEdit"
-            :bodyShape="bodyShapeEdit"
-            :resource="resourceEdit"
-            @form-submitted="setDataFromForm"/>
-      </div>
-    </div>
-    <div class="item-grid-right">
-      <h2>RDF Output</h2>
-      <div style="padding: 0.25rem">
-        <DisplayRDF v-bind:rdfdata="dataMap['sw-edit']"/>
-      </div>
-    </div>
-
-
     <!-- 3rd row -->
     <div class="item-grid-left">
       <h2>Software Element - Visualisation</h2>
@@ -110,8 +89,8 @@ export default {
       headerShape = await fetchShape("headerShape");
       this.headerShapeEdit = headerShape.namedNode(ns.cfrl.HeaderShape)
 
-      this.resourceEdit = await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample")
-      this.resourceVisualisation = await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample")
+      this.resourceVisualisation = await (await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample"))
+      .namedNode(ns.cfrl.Mario)
     },
     methods: {
       setDataFromForm: function(data: string, id: string){
