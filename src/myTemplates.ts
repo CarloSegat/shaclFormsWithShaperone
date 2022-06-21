@@ -52,23 +52,9 @@ export const myTemplate = {
         // console.log("what does property contain? ", properties);
         // console.log("renderer? ", renderer);
         // console.log(" renderer.Property.canRemove? ",  renderer.Property.canRemove); 
-        let canREmove = renderer.property && actions.remove && renderer.property.canRemove;
-        const removeRow = canREmove ? html`
-        <div>
-            <button 
-                @click="${(e) => {
-                e.preventDefault();
-                actions.remove()
-            }}" 
-                title="Remove value">
-                Remove
-            </button>
-        </div>`
-            : html``
 
         return html`
         ${repeat(properties, property => renderer.renderProperty({ property }))}
-        ${removeRow}
         `;
     },
     property(renderer, { property }) {
@@ -120,7 +106,7 @@ export const myTemplate = {
                 actions.remove()
             }}" 
                 title="Remove value">
-                Remove
+                Remove (obj)
             </button>
         </div>`
             : html``
