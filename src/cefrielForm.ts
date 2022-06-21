@@ -5,9 +5,10 @@ import { dataset, blankNode } from '@rdf-esm/dataset'
 import { ns } from './namespaces'
 import { turtle } from '@tpluscode/rdf-string'
 import type { ShaperoneForm } from '@hydrofoil/shaperone-wc';
+import type { NamespaceBuilder } from '@rdfjs/namespace';
 import clownface, { AnyPointer, GraphPointer, AnyContext } from 'clownface'
 import type DatasetExt from 'rdf-ext/lib/Dataset';
-import NamedNode from 'rdf-ext/lib/NamedNode';
+import type NamedNode from 'rdf-js';
 import rdfFetch from '@rdfjs/fetch'
 // import type { component, editor, rendere } from '@hydrofoil/shaperone-wc/configure' 
 import { components, editors, renderer, validation } from '@hydrofoil/shaperone-wc/configure' 
@@ -33,9 +34,6 @@ export class SimpleGreeting extends LitElement {
     }
   `;
 
-  @property({ type: Object })
-  resource?: AnyPointer = this.defaultResource();
-
   @property()
   headerShape!: AnyPointer;
 
@@ -49,6 +47,10 @@ export class SimpleGreeting extends LitElement {
   instancesURL: string[] = [];
   @property()
   propConflictStrategy: string = "keep-header"; // ignore
+  @property()
+  resourceURI: NamedNode.NamedNode<string> = ns.cfrl.newResource;
+  @property({ type: Object })
+  resource?: AnyPointer;
   // END DEFAULTED CONFIGS 
 
   @query('#header-form')
@@ -68,6 +70,10 @@ export class SimpleGreeting extends LitElement {
     // editors.decorate(instancesSelector.matcher)
     // components.decorate(instancesSelector.decorator({ client: Hydra }))
     console.log("resource", this.resource);
+
+    if(!this.resource){
+      this.resource = this.defaultResource();
+    }
     
     components.pushComponents({nestedForm})
     renderer.setTemplates(myTemplate)
@@ -204,8 +210,9 @@ export class SimpleGreeting extends LitElement {
   }
 
   private defaultResource() : AnyPointer {
+    console.log("resourceIRI", this.resourceURI);
     let result = clownface({dataset: dataset()})
-    .namedNode(ns.cfrl.newResource.value.toString() + "/" + Math.floor(Math.random() * 999999))
+    .namedNode(this.resourceURI.value.toString() + "/" + Math.floor(Math.random() * 999999))
 
     return result
   }
