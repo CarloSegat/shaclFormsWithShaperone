@@ -51,12 +51,6 @@ export class SimpleGreeting extends LitElement {
   propConflictStrategy: string = "keep-header"; // ignore
   // END DEFAULTED CONFIGS 
 
-  @state()
-  h?: AnyPointer
-
-  @state()
-  b?: AnyPointer
-
   @query('#header-form')
   headerForm!: ShaperoneForm
 
@@ -73,6 +67,8 @@ export class SimpleGreeting extends LitElement {
     // const nestingComponents = await import('./InlineNestedShapes')
     // editors.decorate(instancesSelector.matcher)
     // components.decorate(instancesSelector.decorator({ client: Hydra }))
+    console.log("resource", this.resource);
+    
     components.pushComponents({nestedForm})
     renderer.setTemplates(myTemplate)
     validation.setValidator(validate)
@@ -121,9 +117,6 @@ export class SimpleGreeting extends LitElement {
       
     });
 
-    this.b = this.resource?.out(ns.cfrl.body)
-    this.h = this.resource?.out(ns.cfrl.header)
-
     this.detectPropConflict()
     
 
@@ -149,13 +142,13 @@ export class SimpleGreeting extends LitElement {
       <shaperone-form
         .id=${'header-form'}
         .shapes=${this.headerShape}
-        .resource=${this.h}
+        .resource=${this.resource}
       ></shaperone-form>
 
       <shaperone-form
         .id=${'body-form'}
         .shapes=${this.bodyShape}
-        .resource=${this.b}
+        .resource=${this.resource}
       ></shaperone-form>
     
       <button
@@ -185,12 +178,12 @@ export class SimpleGreeting extends LitElement {
 
     let headerPropNames = new Set(this.headerShape
       .out(ns.sh.property)
-      .out(ns.sh.name)
+      .out(ns.sh.path)
       .values)
 
     let bodyPropNames = new Set(this.bodyShape
       .out(ns.sh.property)
-      .out(ns.sh.name)
+      .out(ns.sh.path)
       .values)
 
     let duplicateProps = new Set([...headerPropNames].filter(i => bodyPropNames.has(i)));
@@ -213,10 +206,6 @@ export class SimpleGreeting extends LitElement {
   private defaultResource() : AnyPointer {
     let result = clownface({dataset: dataset()})
     .namedNode(ns.cfrl.newResource.value.toString() + "/" + Math.floor(Math.random() * 999999))
-    
-    result
-        .addOut(ns.cfrl.body, result.blankNode())
-        .addOut(ns.cfrl.header, result.blankNode())
 
     return result
   }
