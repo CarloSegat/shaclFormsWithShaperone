@@ -21,6 +21,8 @@ export const nestedForm: SingleEditorComponent = {
           border: darkgray;
           border-style: inset;
           padding: 1rem;
+          width: fit-content;
+          display: inline-flex;
         }
       </style>
         ${renderer.renderFocusNode({ focusNode, shape: node })}

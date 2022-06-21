@@ -54,7 +54,9 @@ export const myTemplate = {
         // console.log(" renderer.Property.canRemove? ",  renderer.Property.canRemove); 
 
         return html`
-        ${repeat(properties, property => renderer.renderProperty({ property }))}
+        <div>
+            ${repeat(properties, property => renderer.renderProperty({ property }))}
+        </div>
         `;
     },
     property(renderer, { property }) {
@@ -69,10 +71,14 @@ export const myTemplate = {
         // TODO the add button should not be repeated for each element added 
         const addRow = !property.selectedEditor && property.canAdd
             ? html`<div>
-                    <button @click="${(e) => {
-                    e.preventDefault();
-                    actions.addObject()
-                }}" title="Add value">Add</button>
+                    <button 
+                    style='margin-top: 1rem'
+                        @click="${(e) => {
+                            e.preventDefault();
+                            actions.addObject()
+                        }}" title="Add value">
+                        Add ${property.name}
+                    </button>
                 </div>`
             : html``
 
@@ -88,9 +94,16 @@ export const myTemplate = {
             width: 15rem;
             height: 1.35rem;
            }
+
+           .field {
+                margin-top: 0.5rem;
+                display: flex;
+           }
         </style>
         <div class="field">
-            <label for="${property.shape.id.value}">${taggedLiteral(property.shape, { property: sh.name })}</label>
+            <label for="${property.shape.id.value}" style='margin-right: 1rem'>
+                ${taggedLiteral(property.shape, { property: sh.name })}
+            </label>
             ${renderer.renderObject({ object })}
             
         </div>`)}`;
@@ -99,7 +112,6 @@ export const myTemplate = {
         const { actions } = renderer
         let canREmove = renderer.property && actions.remove && renderer.property.canRemove;
         const removeRow = canREmove ? html`
-        <div>
             <button 
                 @click="${(e) => {
                 e.preventDefault();
@@ -108,7 +120,7 @@ export const myTemplate = {
                 title="Remove value">
                 Remove (obj)
             </button>
-        </div>`
+        `
             : html``
         return html`
         <div>
