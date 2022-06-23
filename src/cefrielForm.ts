@@ -23,13 +23,15 @@ import { readOnly } from '@hydrofoil/shaperone-wc/components/readonly';
 import { validate } from '@hydrofoil/shaperone-rdf-validate-shacl'
 
 @customElement('custom-f')
-export class SimpleGreeting extends LitElement {
+export class SemanticForm extends LitElement {
 
   static styles = css`
     :host {
       color: black;
     }
     shaperone-form::part(invalid) {
+      border-style: groove;
+      border-block-width: 0.15rem;
       border-color: red;
     }
   `;
@@ -62,14 +64,9 @@ export class SimpleGreeting extends LitElement {
   protected shouldUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): boolean {
     // avoid rendering the component if props are not available
     return this.bodyShape !== null && this.headerShape !== null
-    // return true
   }
 
   protected async willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
-    // const nestingComponents = await import('./InlineNestedShapes')
-    // editors.decorate(instancesSelector.matcher)
-    // components.decorate(instancesSelector.decorator({ client: Hydra }))
-    console.log("resource", this.resource);
 
     if(!this.resource){
       this.resource = this.defaultResource();
@@ -78,7 +75,6 @@ export class SimpleGreeting extends LitElement {
     components.pushComponents({nestedForm})
     renderer.setTemplates(myTemplate)
     validation.setValidator(validate)
-
 
   // TODO IMPLEMENT SOMETHING THAT RENDERS A TEXT FIELD
   // LOOK AT TODO_STYLE IN DOCUMENT TESI
@@ -102,34 +98,37 @@ export class SimpleGreeting extends LitElement {
 // }
 
 
-    console.log("components: ", components);
-    
+    // console.log("components: ", components);
     if(this.readonly) {
       this.makeAllPropertiesReadonly();
     }
-    this.instancesURL.forEach(async url => {
-      const res = await rdfFetch(url)
-      // const streamm = res.quadStream().
-      const dd = await res.dataset()
-      console.log("fetched rdf response: ", res);
+    this.fetchExtraResources();
+    this.detectPropConflict();
+    this.headerShape
+      .out(ns.sh.property)
+      .has(ns.sh.path, ns.rdf.type)
+  }
 
+  private fetchExtraResources() {
+    this.instancesURL.forEach(async (url) => {
+      const res = await rdfFetch(url);
+      const dd = await res.dataset();
       for (const quad of dd) {
-        //console.log("adding quad: ", quad);
-        this.headerShape.dataset.add(quad)
-        // TODO add ody
-        // this.headerShape.dataset.add(quad)
-      } 
-      console.log("this.headerShape: ", this.headerShape);
-      
+        // the fetched resources are added to:
+        // - header and body to make instanceSelector work
+        // - resource so that it passs the SHACL validation
+        // TODO adding all the fetched RDF to the resource is not
+        // efficient, instead a triple should be added only when the used
+        // picks an item from the dropdown
+        this.headerShape.dataset.add(quad);
+        this.bodyShape.dataset.add(quad);
+        this.resource?.dataset.add(quad);
+      }
     });
-
-    this.detectPropConflict()
-    
-
   }
 
   private makeAllPropertiesReadonly() {
-    console.log("makeAllPropertiesReadonly");
+    // console.log("makeAllPropertiesReadonly");
     
     this.headerShape
       .out(ns.sh.property)
@@ -158,16 +157,13 @@ export class SimpleGreeting extends LitElement {
       ></shaperone-form>
     
       <button
-        @click="${this.produceOutput}">Submit
+        @click="${this.submitCallback}">Submit
       </button>
     
     `;
   }
 
-  produceOutput() {
-    // this.headerForm.validate()
-    console.log("this.headerForm.isValid", this.headerForm.isValid)
-    console.log("this.headerForm.validationResults", this.headerForm.validationResults)
+  submitCallback() {
     const event = new CustomEvent('cefriel-form-submitted', {
       detail: {
         data: turtle`${this.resource?.dataset}`.toString()
@@ -182,40 +178,28 @@ export class SimpleGreeting extends LitElement {
 
   private detectPropConflict() {
 
-    let headerPropNames = new Set(this.headerShape
-      .out(ns.sh.property)
-      .out(ns.sh.path)
-      .values)
-
-    let bodyPropNames = new Set(this.bodyShape
-      .out(ns.sh.property)
-      .out(ns.sh.path)
-      .values)
-
-    let duplicateProps = new Set([...headerPropNames].filter(i => bodyPropNames.has(i)));
-
-    if(duplicateProps.size == 0 || this.propConflictStrategy == 'ignore') return;
+    if(this.propConflictStrategy == 'ignore') return;
 
     if(this.propConflictStrategy == 'keep-header') {
-      duplicateProps.forEach(p => {
-        let what = this.headerShape
-        .out(ns.sh.property)
-        .has(ns.sh.name, p)
-        console.log("what", what);
-        this.bodyShape = this.bodyShape.deleteOut(ns.sh.property, what)
-      });
+      // simply remove all the properties present in the header from the body
+      this.bodyShape = this.bodyShape
+        .deleteOut(ns.sh.property, this.headerShape.out(ns.sh.property))
     } else {
       console.error("Invalid propConflictStrategy")
     }
   }
-
+      
   private defaultResource() : AnyPointer {
-    console.log("resourceIRI", this.resourceURI);
+    // notice that the resource needs to be of both types expected by the
+    // header and body sape for validation to target it correctly
+    const typeExpectedByHeader = this.headerShape.out(ns.sh.targetClass)
+    const typeExpectedByBody = this.bodyShape.out(ns.sh.targetClass)
+    
     let result = clownface({dataset: dataset()})
-    .namedNode(this.resourceURI.value.toString() + "/" + Math.floor(Math.random() * 999999))
-
+      .namedNode(this.resourceURI.value.toString() + "/" + Math.floor(Math.random() * 999999))
+      .addOut(ns.rdf.type, typeExpectedByHeader)
+      .addOut(ns.rdf.type, typeExpectedByBody);
     return result
   }
 
 }
-// customElements.define('simple-greeting', SimpleGreeting);
