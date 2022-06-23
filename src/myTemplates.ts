@@ -2,15 +2,18 @@
  * @packageDocumentation
  * @module @hydrofoil/shaperone-wc/templates
  */
-import { html } from 'lit';
+import { html, css } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { sh } from '@tpluscode/rdf-ns-builders/strict';
 import { taggedLiteral } from '@rdfjs-elements/lit-helpers/taggedLiteral.js';
+import type { RenderTemplate } from '@hydrofoil/shaperone-wc/templates';
+import { ns } from './namespaces';
 export * from '@hydrofoil/shaperone-wc/renderer/decorator';
 /**
  * Default implementation of {@link RenderTemplates} which outputs native HTML elements
  */
 export const myTemplate = {
+   
     editor: {
         notFound: () => html`No editor found for property :(`,
     },
@@ -48,11 +51,6 @@ export const myTemplate = {
     },
     group(renderer, { properties }) {
         const { actions } = renderer
-        // console.log("what actions do I have defined? ", actions); // yes
-        // console.log("what does property contain? ", properties);
-        // console.log("renderer? ", renderer);
-        // console.log(" renderer.Property.canRemove? ",  renderer.Property.canRemove); 
-
         return html`
         <div>
             ${repeat(properties, property => renderer.renderProperty({ property }))}
@@ -64,11 +62,7 @@ export const myTemplate = {
         // the second property contains children
         // render property is like "this property"
         const { actions } = renderer
-        // console.log("what actions do I have defined? ", actions); // yes
-        // console.log("what does property contain? ", property);
-        console.log("renderer? ", renderer);
 
-        // TODO the add button should not be repeated for each element added 
         const addRow = !property.selectedEditor && property.canAdd
             ? html`<div>
                     <button 
@@ -82,25 +76,25 @@ export const myTemplate = {
                 </div>`
             : html``
 
-        console.log("property.objects: ", property.objects);
-        
-
         return html`
         ${addRow}
         ${repeat(property.objects, object => html`
         <style>
-           select {
+            select {
             display: inline !important;
             width: 15rem;
             height: 1.35rem;
-           }
+            }
 
-           .field {
+            .field {
                 margin-top: 0.5rem;
                 display: flex;
-           }
+            }
         </style>
-        <div class="field">
+        <div 
+            class="field"
+            part="${property.hasErrors ? 'invalid' : ''}"
+        >
             <label for="${property.shape.id.value}" style='margin-right: 1rem'>
                 ${taggedLiteral(property.shape, { property: sh.name })}
             </label>
@@ -108,8 +102,10 @@ export const myTemplate = {
             
         </div>`)}`;
     },
-    object(renderer) {
-        const { actions } = renderer
+    object(renderer, param) {
+        const { object } = param
+        const { actions, property } = renderer
+         
         let canREmove = renderer.property && actions.remove && renderer.property.canRemove;
         const removeRow = canREmove ? html`
             <button 
