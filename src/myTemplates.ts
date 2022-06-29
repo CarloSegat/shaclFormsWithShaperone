@@ -6,8 +6,6 @@ import { html, css } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { sh } from '@tpluscode/rdf-ns-builders/strict';
 import { taggedLiteral } from '@rdfjs-elements/lit-helpers/taggedLiteral.js';
-import type { RenderTemplate } from '@hydrofoil/shaperone-wc/templates';
-import { ns } from './namespaces';
 export * from '@hydrofoil/shaperone-wc/renderer/decorator';
 /**
  * Default implementation of {@link RenderTemplates} which outputs native HTML elements

@@ -8,7 +8,7 @@ const port = 3001
 
 app.get('/shape/:filename', (req, res) => {
     if(!fs.existsSync(`./shapes/${req.params.filename}.ttl`)){
-        res.send('Requested shape file doesnt exist')
+        res.send(`The shape: ${req.params.filename}.ttl doesnt exisst`)
     } else {
         fs.readFile(`./shapes/${req.params.filename}.ttl`, (err, data) => {
             // console.log("data:", data)

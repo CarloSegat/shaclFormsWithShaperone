@@ -10,7 +10,7 @@
 
 cfrl:SoftwareShape
     a sh:NodeShape ;
-    sh:targetClass cfrl:SoftwareAsset ;
+    sh:targetClass cfrl:swElement ;
     rdfs:label "A piece of software" ;
     sh:property
         cfrl:SchemaNameProperty ,

@@ -7,31 +7,33 @@
 @prefix cfrl: <http://www.cefriel.com/shacl-forms#> .
 @prefix schema: <http://schema.org/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .   
 
 cfrl:HeaderShape a sh:NodeShape ;
     sh:targetClass dcat:Dataset ;
     rdfs:label "Header shape" ;
     sh:property
-    cfrl:DctTitleProperty ,
-    cfrl:DctDescProperty ,
-    cfrl:OptionalProperty ,
-    cfrl:DctTypeProperty .
+        cfrl:DctTitleProperty ,
+        cfrl:DctDescProperty ,
+        cfrl:OptionalVersionProperty ,
+        cfrl:DctTypeProperty ,
+        cfrl:DcatLandingPageProperty .
 
 # description
 cfrl:DctDescProperty
     sh:path dct:description ;
     sh:name "Description" ;
     sh:datatype xsd:string ;
-    dash:singleLine true ;
+    dash:singleLine false ;
     sh:maxCount 1 ;
     sh:minCount 1 .
 
 # optional property
-cfrl:OptionalProperty
-    sh:path cfrl:optionalProperty ;
-    sh:name "Optional 4-digits code" ;
+cfrl:OptionalVersionProperty
+    sh:path cfrl:version ;
+    sh:name "Version" ;
     sh:datatype xsd:string ;
-    sh:pattern "[0-9][0-9][0-9][0-9]" ;
+    sh:pattern "[0-9].[0-9].[0-9]" ;
     dash:singleLine true .
 
 
@@ -53,3 +55,25 @@ cfrl:DctTypeProperty
     sh:class cfrl:AssetType ;
     sh:minCount 1 ;
     sh:maxCount 1 .
+
+cfrl:DcatLandingPageProperty
+    sh:path  dcat:landingPage ;
+    sh:class foaf:Document ;
+    # sh:datatype xsd:anyURI ;
+    sh:node cfrl:LandingPageShape ;
+    sh:name "Landing Page" ;
+   	dash:singleLine true .
+    
+cfrl:LandingPageShape a sh:NodeShape ;
+    sh:targetClass foaf:Document ;
+    sh:property
+        cfrl:UrlOfLandingPageProperty .
+
+cfrl:UrlOfLandingPageProperty
+    sh:path  foaf:primaryTopic ;
+    sh:datatype xsd:anyURI ;
+    sh:name "URL" ;
+   	dash:singleLine true ;
+    sh:minCount 1 ;
+    sh:maxCount 1 .
+        

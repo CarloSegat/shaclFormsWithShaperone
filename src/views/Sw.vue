@@ -1,41 +1,19 @@
 <template>
-
   <div class="grid-container">
-
-    <!-- first row  -->
     <div class="item-grid-left">
       <h2>Software Element - Creation & Editing</h2>
       <div style="padding: 0.25rem">
-         <CreateNew
-          :outputKey="'sw-creation'"
-          :headerShape="headerShapeCreation"
-          :bodyShape="bodyShapeCreation"
-          @form-submitted="setDataFromForm"/>
+        <CreateNew
+          @form-submitted="e => setDataFromForm(e, 'sw-creation')"
+          :headerShape="headerShape"
+          :bodyShape="bodyShape"
+        />
       </div>
     </div>
     <div class="item-grid-right">
       <h2>RDF Output</h2>
       <div style="padding: 0.25rem">
         <DisplayRDF v-bind:rdfdata="dataMap['sw-creation']"/>
-      </div>
-    </div>
-
-    <!-- 3rd row -->
-    <div class="item-grid-left">
-      <h2>Software Element - Visualisation</h2>
-      <div style="padding: 0.25rem">
-         <Visualisation
-          :outputKey="'sw-creation'"
-          :headerShape="headerShapeVisualisation"
-          :bodyShape="bodyShapeVisualisation"
-          :resource="resourceVisualisation"
-         />
-      </div>
-    </div>
-    <div class="item-grid-right">
-      <h2>RDF Output</h2>
-      <div style="padding: 0.25rem">
-        The readonly-form output has been omitted as a readonly form cannot be submitted.
       </div>
     </div>  
 
@@ -44,28 +22,20 @@
 
 <script lang="ts">
 //import $rdf from 'rdf-ext'  
-import CreateNew from '../components/CreateNew.vue'
+import CreateNew from '../components/VueFormWrapper.vue'
 import DisplayRDF from '../components/DisplayRDF.vue'
-import EditRDF from '../components/EditRDF.vue'
-import Visualisation from '../components/Visualisation.vue'
 import { ns } from '@/namespaces'
 import { fetchRDFWithURL, fetchShape } from '@/quadsGenerator'
 
 export default {
     name: 'Sw',
-    components: { CreateNew, DisplayRDF, EditRDF, Visualisation },
+    components: { CreateNew, DisplayRDF },
     data() {
       return {
-        headerShapeCreation: null as any,
-        bodyShapeCreation: null as any,
+        headerShape: null as any,
+        bodyShape: null as any,
+        resource: null as any,
 
-        headerShapeEdit: null as any,
-        bodyShapeEdit: null as any,
-        resourceEdit: null as any,
-
-        headerShapeVisualisation: null as any,
-        bodyShapeVisualisation: null as any,
-        resourceVisualisation: null as any,
         dataMap : {
           'sw-creation': "",
           'sw-edit': ""
@@ -74,29 +44,22 @@ export default {
     },
     async created() {
       let swShape = await fetchShape("swShape");
-      this.bodyShapeCreation = swShape.namedNode(ns.cfrl.SoftwareShape)
-      swShape = await fetchShape("swShape");
-      this.bodyShapeVisualisation = swShape.namedNode(ns.cfrl.SoftwareShape)
-      swShape = await fetchShape("swShape");
-      this.bodyShapeEdit = swShape.namedNode(ns.cfrl.SoftwareShape)
-
-      console.log("this.bodyShapeCreation === this.bodyShapeEdit", this.bodyShapeCreation === this.bodyShapeEdit)
+      this.bodyShape = swShape.namedNode(ns.cfrl.SoftwareShape)
 
       let headerShape = await fetchShape("headerShape");
-      this.headerShapeCreation = headerShape.namedNode(ns.cfrl.HeaderShape)
-      headerShape = await fetchShape("headerShape");
-      this.headerShapeVisualisation = headerShape.namedNode(ns.cfrl.HeaderShape)
-      headerShape = await fetchShape("headerShape");
-      this.headerShapeEdit = headerShape.namedNode(ns.cfrl.HeaderShape)
+      this.headerShape = headerShape.namedNode(ns.cfrl.HeaderShape)
 
-      this.resourceVisualisation = await (await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample"))
-      .namedNode(ns.cfrl.Mario)
+      this.resource = (await fetchRDFWithURL("http://localhost:3001/rdf/swElementExample"))
+        .namedNode(ns.cfrl.Mario)
     },
     methods: {
-      setDataFromForm: function(data: string, id: string){
-        console.log("data for: ", id, " is: ", data)
-        this.dataMap[id] = data;
+
+      setDataFromForm(data: string, key: string) {
+        console.log("jksdhdfgidfdf sdfsdfguosrfgu sdfgguio. key", key)
+        console.log("data for: ", key, " is -> : ", data)
+        this.dataMap[key] = data;
       }
+
     }
 }
 </script>

@@ -5,18 +5,18 @@ import './cefrielForm'
 
 // createApp(App).mount('#app')
 
-import Home from "./views/Ml.vue";
-import About from "./views/Sw.vue";
+import Ml from "./views/Ml.vue";
+import Sw from "./views/Sw.vue";
 
 const routes = [
   { 
     path: '/ml', 
-    component: Home, 
+    component: Ml, 
     name: "Home" 
   },
   { 
     path: '/sw',
-    component: About, 
+    component: Sw, 
     name: "About" 
   },
 ]

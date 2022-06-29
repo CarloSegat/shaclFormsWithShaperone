@@ -7,50 +7,39 @@
       <h2>Machine Learning Model - Creation & Editing</h2>
       <div style="padding: 0.25rem">
          <CreateNew
-          :outputKey="'ml-creation'"
           :headerShape="headerShape"
           :bodyShape="bodyShape"
-          @form-submitted="setDataFromForm"/>
+           @form-submitted="e => setDataFromForm(e, 'ml')"/>
       </div>
     </div>
     <div class="item-grid-right">
       <h2>RDF Output</h2>
       <div style="padding: 0.25rem">
-        <DisplayRDF v-bind:rdfdata="dataMap['ml-creation']"/>
+        <DisplayRDF v-bind:rdfdata="dataMap['ml']"/>
       </div>
     </div>
-
-
-    <!-- 2nd row -->
-  
-
-    <!-- 3rd row -->
-   
 
   </div>
 </template>
 
 <script lang="ts">
 //import $rdf from 'rdf-ext'  
-import CreateNew from '../components/CreateNew.vue'
+import CreateNew from '../components/VueFormWrapper.vue'
 import DisplayRDF from '../components/DisplayRDF.vue'
-import EditRDF from '../components/EditRDF.vue'
-import Visualisation from '../components/Visualisation.vue'
 import { ns } from '@/namespaces'
 import { fetchShape } from '@/quadsGenerator'
 import { vcard, dash, rdf, rdfs } from '@tpluscode/rdf-ns-builders'
 
 
 export default {
-    name: 'Sw',
-    components: { CreateNew, DisplayRDF, EditRDF, Visualisation },
+    name: 'Ml',
+    components: { CreateNew, DisplayRDF },
     data() {
       return {
         headerShape: null as any,
         bodyShape: null as any,
         dataMap : {
-          'ml-creation': "",
-          'ml-edit': ""
+          'ml': ""
         } as  { [k: string]: string },
       }
     },

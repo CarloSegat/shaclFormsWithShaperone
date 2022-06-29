@@ -31,8 +31,8 @@ export class SemanticForm extends LitElement {
     }
     shaperone-form::part(invalid) {
       border-style: groove;
-      border-block-width: 0.15rem;
-      border-color: red;
+      border-block-width: 0.1rem;
+      border-color: #ff7575;
     }
   `;
 
@@ -104,9 +104,9 @@ export class SemanticForm extends LitElement {
     }
     this.fetchExtraResources();
     this.detectPropConflict();
-    this.headerShape
-      .out(ns.sh.property)
-      .has(ns.sh.path, ns.rdf.type)
+    // this.headerShape
+    //   .out(ns.sh.property)
+    //   .has(ns.sh.path, ns.rdf.type)
   }
 
   private fetchExtraResources() {
@@ -141,6 +141,7 @@ export class SemanticForm extends LitElement {
   // Render the UI as a function of component state
   render() {
     
+    console.log("🚀 . SemanticForm . render . headerShape JUST BEFORE RENDER ", this.headerShape)
     return html`
     <style></style>
        
@@ -148,6 +149,7 @@ export class SemanticForm extends LitElement {
         .id=${'header-form'}
         .shapes=${this.headerShape}
         .resource=${this.resource}
+        @changed=${this.changeCallback}
       ></shaperone-form>
 
       <shaperone-form
@@ -187,6 +189,14 @@ export class SemanticForm extends LitElement {
     } else {
       console.error("Invalid propConflictStrategy")
     }
+  }
+
+  private changeCallback(){
+    let quadsWhereObjectIsEmptyString = this.resource?.dataset.match(null, null, literal(''))
+    let resourceWithoutEmptyStrings = this.resource?.dataset;
+    quadsWhereObjectIsEmptyString.quads.forEach(q => {
+      resourceWithoutEmptyStrings.delete(q)
+    });
   }
       
   private defaultResource() : AnyPointer {

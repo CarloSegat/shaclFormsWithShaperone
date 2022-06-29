@@ -7,9 +7,3 @@ cfrl:mlModel a cfrl:AssetType, skos:Concept ;
 
 cfrl:swElement a cfrl:AssetType, skos:Concept ;
     rdfs:label "Software Element" .
-
-cfrl:smartPotato a cfrl:AssetType, skos:Concept ;
-    rdfs:label "Indispensable item for data-space creation" .
-
-cfrl:foo a cfrl:AssetType, skos:Concept ;
-    rdfs:label "Hello" .

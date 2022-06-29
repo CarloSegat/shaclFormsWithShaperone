@@ -3,8 +3,8 @@
     <div style="margin-bottom: 1rem">
 
       <div class="navbarbox">
-        <router-link to="/sw"><h1>Software Element Form</h1></router-link>
-        <router-link to="/ml"><h1>Machine Learning Model Form</h1></router-link>
+        <router-link to="/sw"><h1>Insert Software Element</h1></router-link>
+        <router-link to="/ml"><h1>Insert Machine Learning Model</h1></router-link>
       </div>
 
       <h4>Select one of the <strong style="font-weight: bold;">models above</strong> to see the corresponding example.

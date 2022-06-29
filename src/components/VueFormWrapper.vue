@@ -11,25 +11,27 @@
 import '@hydrofoil/shaperone-wc/shaperone-form'
 import { fetchShape } from '../quadsGenerator'
 import {ns} from '../namespaces'
+import AnyPointer from 'clownface'
 
 export default {
-    name: 'create-new',
+    name: 'vue-form-wrapper',
     methods: {
       emitSubmissionEvent: function(e: any){
-        console.log("ehi yo  yo yo yoy yo", e.detail['data'], this.outputKey);
-        
-        this.$emit('form-submitted', e.detail['data'], this.outputKey)
-      }
-    },
-    data(){
-      return {
-        customNamespace: ns.cfrl.shallallawo
+        this.$emit('form-submitted', e.detail['data'])
       }
     },
     props: {
-      headerShape: null as any,
+      /**
+       * The size of the button
+       * @values small, normal, large
+       */
+      headerShape: {
+        type: AnyPointer,
+        default: null
+      },
       bodyShape: null as any,
-      outputKey: null as any,
+      resource: null as any,
+      instancesURL: null as any,
     },
 }
 </script>
