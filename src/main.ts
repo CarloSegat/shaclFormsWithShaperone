@@ -3,21 +3,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 import './cefrielForm'
 
-// createApp(App).mount('#app')
-
-import Ml from "./views/Ml.vue";
-import Sw from "./views/Sw.vue";
+import ShapeFormOutput from "./views/ShapeFormOutput.vue";
 
 const routes = [
   { 
-    path: '/ml', 
-    component: Ml, 
+    path: '/', 
+    component: ShapeFormOutput, 
     name: "Home" 
-  },
-  { 
-    path: '/sw',
-    component: Sw, 
-    name: "About" 
   },
 ]
 

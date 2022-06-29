@@ -1,5 +1,7 @@
 <template>
-  <rdf-editor id="resourceEditor" 
+  <rdf-editor 
+    class="scrollable"
+    id="resourceEditor" 
     prefixes="sh,dash,rdfs"
     .value="rdfdata"
     format="text/turtle">
@@ -32,11 +34,8 @@ export default {
 
 <style scoped>
 @import '../assets/base.css';
-  .divtext {
-    border: ridge 2px;
-    padding: 2px;
-    width: 100%;
-    min-height: 5em;  
-    overflow: auto;
+  .scrollable {
+    height: 90vh;
+    /* overflow: scroll; */
 }
 </style>

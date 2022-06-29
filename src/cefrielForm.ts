@@ -40,7 +40,7 @@ export class SemanticForm extends LitElement {
   headerShape!: AnyPointer;
 
   @property()
-  bodyShape!: any;
+  bodyShape?: any;
   
   // DEFAULTED CONFIGS 
   @property({reflect: true})
@@ -63,7 +63,7 @@ export class SemanticForm extends LitElement {
 
   protected shouldUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): boolean {
     // avoid rendering the component if props are not available
-    return this.bodyShape !== null && this.headerShape !== null
+    return this.headerShape !== null
   }
 
   protected async willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
@@ -121,7 +121,7 @@ export class SemanticForm extends LitElement {
         // efficient, instead a triple should be added only when the used
         // picks an item from the dropdown
         this.headerShape.dataset.add(quad);
-        this.bodyShape.dataset.add(quad);
+        this.bodyShape?.dataset.add(quad);
         this.resource?.dataset.add(quad);
       }
     });
@@ -134,14 +134,20 @@ export class SemanticForm extends LitElement {
       .out(ns.sh.property)
       .addOut(ns.dash.readOnly, true)
 
-   this.bodyShape
-      .out(ns.sh.property)
+   this.bodyShape?.out(ns.sh.property)
       .addOut(ns.dash.readOnly, true)
   }
   // Render the UI as a function of component state
   render() {
     
-    console.log("🚀 . SemanticForm . render . headerShape JUST BEFORE RENDER ", this.headerShape)
+    let body = this.bodyShape !== null ? 
+    html`<shaperone-form
+      .id=${'body-form'}
+      .shapes=${this.bodyShape}
+      .resource=${this.resource}>
+    </shaperone-form>` 
+    : html``
+
     return html`
     <style></style>
        
@@ -152,12 +158,8 @@ export class SemanticForm extends LitElement {
         @changed=${this.changeCallback}
       ></shaperone-form>
 
-      <shaperone-form
-        .id=${'body-form'}
-        .shapes=${this.bodyShape}
-        .resource=${this.resource}
-      ></shaperone-form>
-    
+      ${body}
+      <br>
       <button
         @click="${this.submitCallback}">Submit
       </button>
@@ -181,6 +183,8 @@ export class SemanticForm extends LitElement {
   private detectPropConflict() {
 
     if(this.propConflictStrategy == 'ignore') return;
+    if(!this.bodyShape) return ;
+    console.log("🚀 . SemanticForm . detectPropConflict . this.bodyShape", this.bodyShape)
 
     if(this.propConflictStrategy == 'keep-header') {
       // simply remove all the properties present in the header from the body
@@ -203,12 +207,15 @@ export class SemanticForm extends LitElement {
     // notice that the resource needs to be of both types expected by the
     // header and body sape for validation to target it correctly
     const typeExpectedByHeader = this.headerShape.out(ns.sh.targetClass)
-    const typeExpectedByBody = this.bodyShape.out(ns.sh.targetClass)
+    const typeExpectedByBody = this.bodyShape?.out(ns.sh.targetClass)
     
     let result = clownface({dataset: dataset()})
       .namedNode(this.resourceURI.value.toString() + "/" + Math.floor(Math.random() * 999999))
       .addOut(ns.rdf.type, typeExpectedByHeader)
-      .addOut(ns.rdf.type, typeExpectedByBody);
+
+    if(typeExpectedByBody){
+      result.addOut(ns.rdf.type, typeExpectedByBody);
+    }
     return result
   }
 

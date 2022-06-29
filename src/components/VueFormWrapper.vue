@@ -2,12 +2,13 @@
   <custom-f
     .headerShape="headerShape"
     .bodyShape="bodyShape"
-    .instancesURL="['http://localhost:3001/rdf/assetTypes']"
     @cefriel-form-submitted="emitSubmissionEvent"
   ></custom-f>
 </template>
 
 <script lang="ts">
+//  .instancesURL="['http://localhost:3001/rdf/assetTypes']"
+
 import '@hydrofoil/shaperone-wc/shaperone-form'
 import { fetchShape } from '../quadsGenerator'
 import {ns} from '../namespaces'
