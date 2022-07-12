@@ -15,7 +15,6 @@ import clownface, { AnyPointer, GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 import { dataset, blankNode } from '@rdf-esm/dataset'
 import { sh, rdf } from '@tpluscode/rdf-ns-builders'
-import { generateQuads } from '../quadsGenerator'
 import {ns} from '../shacl-form-generator/namespaces'
 import fetch from '@rdfjs/fetch'
 import { ref } from 'vue'
@@ -26,9 +25,6 @@ export default {
     props: {
       rdfdata: String
     },
-    mounted() {
-       
-    }
 }
 </script>
 
@@ -36,6 +32,5 @@ export default {
 @import '../assets/base.css';
   .scrollable {
     height: 90vh;
-    /* overflow: scroll; */
 }
 </style>

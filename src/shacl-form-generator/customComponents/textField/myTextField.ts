@@ -2,7 +2,7 @@ import { html } from 'lit';
 import { getType } from '../utils/textFieldType';
 import { validity } from '../utils/validity';
 import { readOnly } from '../utils/readonly';
-import { thinBorderBottom } from '../../assets/style/style';
+import { thinBorderBottom } from '../../assets/style';
 
 export const textField = function ({ property, value }, { update }) {
     var _a;

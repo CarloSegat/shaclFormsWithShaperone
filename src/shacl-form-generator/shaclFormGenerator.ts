@@ -18,7 +18,7 @@ import { template } from './customTemplate/template'
 import { literal, namedNode } from '@rdf-esm/data-model';
 import { textFieldEditor, instanceSelect } from './customComponents';
 import { paperPlane } from './assets/icons/icons';
-import { thinBorderBottom } from './assets/style/style';
+import { thinBorderBottom, alignItemsVerticalCenter, hoover } from './assets/style';
 
 
 @customElement('shaperone-form-gen')
@@ -128,22 +128,21 @@ export class SemanticForm extends LitElement {
     : html``
 
     return html`
+      ${alignItemsVerticalCenter}
       ${thinBorderBottom}
+      ${hoover}
+
       <shaperone-form
         .id=${'header-form'}
         .shapes=${this.headerShape}
         .resource=${this.resource}
         @changed=${this.changeCallback}
-      ></shaperone-form>
+      >
+      </shaperone-form>
 
       ${body}
         <button
-          class='thinBorderBottom'
-        style='background-color: transparent; 
-          display: flex; 
-          align-items: center; 
-          padding: 0.5rem; 
-          gap: 1rem;'
+          class='thinBorderBottom alignItemsVerticalCenter hoover'
           @click="${this.submitCallback}">
           <div>${paperPlane}</div>
           <div>Submit</div>

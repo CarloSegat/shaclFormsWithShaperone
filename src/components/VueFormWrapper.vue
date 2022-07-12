@@ -10,7 +10,7 @@
 //  .instancesURL="['http://localhost:3001/rdf/assetTypes']"
 
 import '@hydrofoil/shaperone-wc/shaperone-form'
-import { fetchShape } from '../quadsGenerator'
+import { fetchShape } from '../utils'
 import {ns} from '../shacl-form-generator/namespaces'
 import AnyPointer from 'clownface'
 

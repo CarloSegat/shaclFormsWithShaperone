@@ -34,7 +34,7 @@
 import CreateNew from "../components/VueFormWrapper.vue";
 import DisplayRDF from "../components/DisplayRDF.vue";
 import { ns } from "@/shacl-form-generator/namespaces";
-import { fetchShape } from "@/quadsGenerator";
+import { fetchShape } from "@/utils";
 import { vcard, dash, rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { dataset, blankNode } from '@rdf-esm/dataset'
 import clownface, { AnyPointer, GraphPointer, AnyContext } from 'clownface'
@@ -133,7 +133,6 @@ cfrl:ContactProperty
   },
   methods: {
     setDataFromForm: function (mydata: string) {
-      console.log("data is: ", mydata);
       this.formOutput = mydata;
     },
     quadsChangedCallback: function(quads: any) {

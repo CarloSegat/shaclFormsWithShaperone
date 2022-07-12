@@ -4,7 +4,7 @@ import { validity } from "../utils/validity";
 import { repeat } from 'lit/directives/repeat.js';
 import { css } from 'lit';
 import {styleMap} from 'lit/directives/style-map.js';
-import { thinBorderBottom } from "../../assets/style/style";
+import { thinBorderBottom } from "../../assets/style";
 
 export const instanceSelect = function ({ property, value }, { update }) {
     const choices = value.componentState.choices || [];
