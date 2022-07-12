@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-import './cefrielForm'
+import './shacl-form-generator/shaclFormGenerator'
 
 import ShapeFormOutput from "./views/ShapeFormOutput.vue";
 

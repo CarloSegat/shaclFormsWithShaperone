@@ -53,6 +53,7 @@ cfrl:DctTypeProperty
     dash:editor dash:InstancesSelectEditor ;
     dash:hidden true ;
     sh:class cfrl:AssetType ;
+    sh:message "This is a user-defined validation mssage to be displayed when the property type has an error" ;
     sh:minCount 1 ;
     sh:maxCount 1 .
 

@@ -2,6 +2,9 @@
   <main>
     <router-view></router-view>
   </main>
+  <span style="font-size: 3em; color: Tomato;">
+      <i class="fas fa-camera"></i>
+    </span>
 </template>
 
 <style>

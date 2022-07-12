@@ -42,7 +42,6 @@ export default {
         }
         if(quadStream !== null){
             for await (const quad of quadStream) {
-              //console.log("🚀 . forawait . quad", quad)
               quads.push(quad)
             }
         }

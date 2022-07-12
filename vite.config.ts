@@ -15,7 +15,7 @@ export default  defineConfig({
       template: {
         compilerOptions: {
           // treat all tags with a dash as custom elements
-          isCustomElement: (tag) => tag.includes('shaperone') || tag.includes('custom')
+          isCustomElement: (tag) => tag.includes('shaperone-form-gen') || tag.includes('custom')
         }
       }
     }

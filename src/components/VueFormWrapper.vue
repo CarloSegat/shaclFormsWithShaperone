@@ -1,9 +1,9 @@
 <template>
-  <custom-f
+  <shaperone-form-gen
     .headerShape="headerShape"
     .bodyShape="bodyShape"
     @cefriel-form-submitted="emitSubmissionEvent"
-  ></custom-f>
+  ></shaperone-form-gen>
 </template>
 
 <script lang="ts">
@@ -11,7 +11,7 @@
 
 import '@hydrofoil/shaperone-wc/shaperone-form'
 import { fetchShape } from '../quadsGenerator'
-import {ns} from '../namespaces'
+import {ns} from '../shacl-form-generator/namespaces'
 import AnyPointer from 'clownface'
 
 export default {

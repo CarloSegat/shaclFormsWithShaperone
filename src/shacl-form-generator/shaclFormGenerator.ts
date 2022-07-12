@@ -12,28 +12,30 @@ import type NamedNode from 'rdf-js';
 import rdfFetch from '@rdfjs/fetch'
 // import type { component, editor, rendere } from '@hydrofoil/shaperone-wc/configure' 
 import { components, editors, renderer, validation } from '@hydrofoil/shaperone-wc/configure' 
-import { nestedForm } from './InlineNestedShapes'
-import { myTemplate } from './myTemplates'
-import { literal, namedNode } from '@rdf-esm/data-model';
-import { repeat } from 'lit/directives/repeat.js';
-import { xsd } from '@tpluscode/rdf-ns-builders';
-import { getType } from '@hydrofoil/shaperone-wc/components/lib/textFieldType';
-import { validity } from '@hydrofoil/shaperone-wc/components/validity';
-import { readOnly } from '@hydrofoil/shaperone-wc/components/readonly';
 import { validate } from '@hydrofoil/shaperone-rdf-validate-shacl'
+import { nestedForm } from './customComponents/nestedInlineForm'
+import { template } from './customTemplate/template'
+import { literal, namedNode } from '@rdf-esm/data-model';
+import { textFieldEditor, instanceSelect } from './customComponents';
+import { paperPlane } from './assets/icons/icons';
+import { thinBorderBottom } from './assets/style/style';
 
-@customElement('custom-f')
+
+@customElement('shaperone-form-gen')
 export class SemanticForm extends LitElement {
 
   static styles = css`
     :host {
       color: black;
+      --error-red: red;
+      --field-height: 1.2rem;
+      --font-size: 1.1rem;
     }
+
     shaperone-form::part(invalid) {
-      border-style: groove;
-      border-block-width: 0.1rem;
       border-color: #ff7575;
     }
+
   `;
 
   @property()
@@ -71,42 +73,19 @@ export class SemanticForm extends LitElement {
     if(!this.resource){
       this.resource = this.defaultResource();
     }
+    validation.setValidator(validate)
     
     components.pushComponents({nestedForm})
-    renderer.setTemplates(myTemplate)
-    validation.setValidator(validate)
+    renderer.setTemplates(template)
+   
+    components.pushComponents({ textFieldEditor })
+    components.pushComponents({ instanceSelect })
 
-  // TODO IMPLEMENT SOMETHING THAT RENDERS A TEXT FIELD
-  // LOOK AT TODO_STYLE IN DOCUMENT TESI
-
-  // OLD CODE BELOW
-//   textField: function ({ property, value }, { update }) {
-//     var _a;
-//     console.log("THIS IS WORKING 9999999999999999999999999%");
-//     return html `
-//         <style>
-//             input {
-//                 background-color: orange;
-//             }
-//         </style>
-//         <input 
-//             .value="${((_a = value.object) === null || _a === void 0 ? void 0 : _a.value) || ''}"
-//                 type="${getType(property.datatype)}"
-//                 ${validity(value)}
-//                 ${readOnly(property)}
-//                 @blur="${(e) => update(e.target.value)}">`;
-// }
-
-
-    // console.log("components: ", components);
     if(this.readonly) {
       this.makeAllPropertiesReadonly();
     }
     this.fetchExtraResources();
     this.detectPropConflict();
-    // this.headerShape
-    //   .out(ns.sh.property)
-    //   .has(ns.sh.path, ns.rdf.type)
   }
 
   private fetchExtraResources() {
@@ -149,8 +128,7 @@ export class SemanticForm extends LitElement {
     : html``
 
     return html`
-    <style></style>
-       
+      ${thinBorderBottom}
       <shaperone-form
         .id=${'header-form'}
         .shapes=${this.headerShape}
@@ -159,11 +137,17 @@ export class SemanticForm extends LitElement {
       ></shaperone-form>
 
       ${body}
-      <br>
-      <button
-        @click="${this.submitCallback}">Submit
-      </button>
-    
+        <button
+          class='thinBorderBottom'
+        style='background-color: transparent; 
+          display: flex; 
+          align-items: center; 
+          padding: 0.5rem; 
+          gap: 1rem;'
+          @click="${this.submitCallback}">
+          <div>${paperPlane}</div>
+          <div>Submit</div>
+        </button>
     `;
   }
 
@@ -184,7 +168,7 @@ export class SemanticForm extends LitElement {
 
     if(this.propConflictStrategy == 'ignore') return;
     if(!this.bodyShape) return ;
-    console.log("🚀 . SemanticForm . detectPropConflict . this.bodyShape", this.bodyShape)
+  
 
     if(this.propConflictStrategy == 'keep-header') {
       // simply remove all the properties present in the header from the body
@@ -196,6 +180,9 @@ export class SemanticForm extends LitElement {
   }
 
   private changeCallback(){
+    console.log("this.headerForm?.isValid ", this.headerForm?.isValid);
+    
+    
     let quadsWhereObjectIsEmptyString = this.resource?.dataset.match(null, null, literal(''))
     let resourceWithoutEmptyStrings = this.resource?.dataset;
     quadsWhereObjectIsEmptyString.quads.forEach(q => {

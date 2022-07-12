@@ -33,7 +33,7 @@
 //import $rdf from 'rdf-ext'
 import CreateNew from "../components/VueFormWrapper.vue";
 import DisplayRDF from "../components/DisplayRDF.vue";
-import { ns } from "@/namespaces";
+import { ns } from "@/shacl-form-generator/namespaces";
 import { fetchShape } from "@/quadsGenerator";
 import { vcard, dash, rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { dataset, blankNode } from '@rdf-esm/dataset'
@@ -61,14 +61,25 @@ cfrl:PetShape
   sh:property
     cfrl:SchemaNameProperty ,
 	  cfrl:PetTypeProperty ,
-	  cfrl:AgeProp ,
-	  cfrl:ColorProp .
+	  cfrl:UrlPictureProp ,
+	  cfrl:OwnersProperty .
 
 cfrl:SchemaNameProperty
     sh:path schema:name ;
     sh:name "Name" ;
     sh:datatype xsd:string ;
     dash:singleLine true ;
+    sh:message "Please insert your pet's name" ;
+    sh:maxCount 1 ;
+    sh:minCount 1 .
+
+cfrl:UrlPictureProp
+    sh:path cfrl:urlToPicture ;
+    sh:name "Picture URL" ;
+    sh:datatype xsd:anyURI ;
+    sh:pattern "http[a-zA-Z]*" ;
+    dash:singleLine true ;
+    sh:message "Please give a valid URL to your pet picture" ;
     sh:maxCount 1 ;
     sh:minCount 1 .
 
@@ -76,20 +87,42 @@ cfrl:PetTypeProperty
 	sh:path cfrl:PetType ;
 	sh:name "Type" ;
 	sh:in ("Cat" "Dog" "Turtle") ;
+  sh:message "Please specify what pet you have" ;
 	sh:maxCount 1 ;
-    sh:minCount 1 .
+  sh:minCount 1 .
 
-cfrl:ColorProp
-	sh:path cfrl:Color ;
-	sh:name "Color RGB" ;
-	sh:maxCount 1 ;
-	sh:pattern '[0-9][0-9][0-9]' .
+cfrl:OwnersProperty
+  a sh:PropertyShape ;
+  sh:path cfrl:owners ;
+  sh:name "Owners" ;
+  dash:viewer dash:DetailsViewer ;
+  sh:node cfrl:OwnerShape ;
+  sh:class cfrl:Person ;
+  sh:message "Please fill all the required fields" ;
+  sh:minCount 1 ;
+  sh:maxCount 3 .
 
-cfrl:AgeProp
+cfrl:OwnerProp
 	sh:path cfrl:Age ;
 	sh:name "Age" ;
 	sh:maxCount 1 ;
 	sh:datatype xsd:number .
+
+cfrl:OwnerShape
+  a sh:NodeShape ;
+  sh:targetClass cfrl:Owner ;
+  rdfs:label "The pet owner" ;
+  sh:property
+    cfrl:SchemaNameProperty ,
+    cfrl:ContactProperty .
+
+cfrl:ContactProperty
+  a sh:PropertyShape ;
+  sh:path cfrl:contact ;
+  sh:name "Contact" ;
+  sh:datatype xsd:string ;
+  sh:maxCount 1 ;
+  sh:minCount 1 .
 `,
       shapeClown: null as any,
       formOutput: null as any,
@@ -104,7 +137,6 @@ cfrl:AgeProp
       this.formOutput = mydata;
     },
     quadsChangedCallback: function(quads: any) {
-      console.log("🚀 . quads", quads.detail.value)
       this.shapeClown = clownface({dataset: dataset(quads.detail.value)}).namedNode(ns.cfrl.PetShape)
     }
   },
