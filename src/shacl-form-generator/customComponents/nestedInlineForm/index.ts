@@ -27,7 +27,7 @@ export const nestedForm: SingleEditorComponent = {
               border: darkgray;
               border-width: 0.15rem;
               border-style: inset;
-              padding: 1rem;
+              padding: 0.75rem;
               width: fit-content;
               display: inline-flex;
           }
@@ -35,7 +35,6 @@ export const nestedForm: SingleEditorComponent = {
         <div
           ${validity(value)}
           class="nested-container">
-        
           ${renderer.renderFocusNode({ focusNode, shape: node })}
         </div>`
     }

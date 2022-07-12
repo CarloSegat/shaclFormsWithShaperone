@@ -14,7 +14,7 @@ import rdfFetch from '@rdfjs/fetch'
 import { components, editors, renderer, validation } from '@hydrofoil/shaperone-wc/configure'
 import { validate } from '@hydrofoil/shaperone-rdf-validate-shacl'
 import { nestedForm } from './customComponents/nestedInlineForm'
-import { template } from './customTemplate/template'
+import { template } from './template/template'
 import { literal, namedNode } from '@rdf-esm/data-model';
 import { textFieldEditor, instanceSelect } from './customComponents';
 import { paperPlane } from './assets/icons/icons';

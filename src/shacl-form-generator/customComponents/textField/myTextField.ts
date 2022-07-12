@@ -17,5 +17,6 @@ export const textField = function ({ property, value }, { update }) {
             type="${getType(property.datatype)}"
             ${validity(value, property)}
             ${readOnly(property)}
-            @blur="${(e) => update(e.target.value)}">`;
+            @blur="${(e) => update(e.target.value)}"
+    >`;
 };
