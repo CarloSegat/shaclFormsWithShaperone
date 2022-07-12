@@ -1,6 +1,6 @@
 import { html } from 'lit-element';
 
-export const thinBorderBottom = html`
+export const thinBorderBottomCSS = html`
 <style>
   .thinBorderBottom {
       border: none;
@@ -11,7 +11,7 @@ export const thinBorderBottom = html`
 </style>
 `;
 
-export const noBorders = html`
+export const noBordersCSS = html`
 <style>
   .noBorders {
       border: none;
@@ -21,7 +21,7 @@ export const noBorders = html`
 </style>
 `;
 
-export const alignItemsVerticalCenter = html`
+export const alignItemsVerticalCenterCSS = html`
 <style>
   .alignItemsVerticalCenter {
     display: flex; 
@@ -33,10 +33,38 @@ export const alignItemsVerticalCenter = html`
 </style>
 `;
 
-export const hoover = html`
+export const hooverCSS = html`
 <style>
   .hoover:hover {
     background-color: var(--vt-c-text-dark-2);
+  }
+</style>
+`;
+
+export const fieldContainerCSS = html`
+<style> 
+
+.fieldContainer {
+    width: var(--field-width);
+    margin: 1.5rem 0rem;
+    font-size: var(--font-size);
+  }
+
+.nested-container .fieldContainer {
+    width: var(--field-width);
+    margin: 0.5rem 0rem;
+    font-size: var(--font-size);
+  }
+</style>
+
+
+`;
+
+export const fieldCSS = html`
+<style>
+  .field {
+    width: var(--field-width);
+    font-size: var(--font-size);
   }
 </style>
 `;

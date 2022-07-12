@@ -11,14 +11,14 @@ import type DatasetExt from 'rdf-ext/lib/Dataset';
 import type NamedNode from 'rdf-js';
 import rdfFetch from '@rdfjs/fetch'
 // import type { component, editor, rendere } from '@hydrofoil/shaperone-wc/configure' 
-import { components, editors, renderer, validation } from '@hydrofoil/shaperone-wc/configure' 
+import { components, editors, renderer, validation } from '@hydrofoil/shaperone-wc/configure'
 import { validate } from '@hydrofoil/shaperone-rdf-validate-shacl'
 import { nestedForm } from './customComponents/nestedInlineForm'
 import { template } from './customTemplate/template'
 import { literal, namedNode } from '@rdf-esm/data-model';
 import { textFieldEditor, instanceSelect } from './customComponents';
 import { paperPlane } from './assets/icons/icons';
-import { thinBorderBottom, alignItemsVerticalCenter, hoover } from './assets/style';
+import { thinBorderBottomCSS, alignItemsVerticalCenterCSS, hooverCSS, fieldContainerCSS } from './assets/style';
 
 
 @customElement('shaperone-form-gen')
@@ -28,7 +28,7 @@ export class SemanticForm extends LitElement {
     :host {
       color: black;
       --error-red: red;
-      --field-height: 1.2rem;
+      --field-width: 25rem;
       --font-size: 1.1rem;
     }
 
@@ -43,9 +43,9 @@ export class SemanticForm extends LitElement {
 
   @property()
   bodyShape?: any;
-  
+
   // DEFAULTED CONFIGS 
-  @property({reflect: true})
+  @property({ reflect: true })
   readonly: boolean = false;
   @property()
   instancesURL: string[] = [];
@@ -70,18 +70,18 @@ export class SemanticForm extends LitElement {
 
   protected async willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
 
-    if(!this.resource){
+    if (!this.resource) {
       this.resource = this.defaultResource();
     }
     validation.setValidator(validate)
-    
-    components.pushComponents({nestedForm})
+
+    components.pushComponents({ nestedForm })
     renderer.setTemplates(template)
-   
+
     components.pushComponents({ textFieldEditor })
     components.pushComponents({ instanceSelect })
 
-    if(this.readonly) {
+    if (this.readonly) {
       this.makeAllPropertiesReadonly();
     }
     this.fetchExtraResources();
@@ -108,29 +108,30 @@ export class SemanticForm extends LitElement {
 
   private makeAllPropertiesReadonly() {
     // console.log("makeAllPropertiesReadonly");
-    
+
     this.headerShape
       .out(ns.sh.property)
       .addOut(ns.dash.readOnly, true)
 
-   this.bodyShape?.out(ns.sh.property)
+    this.bodyShape?.out(ns.sh.property)
       .addOut(ns.dash.readOnly, true)
   }
   // Render the UI as a function of component state
   render() {
-    
-    let body = this.bodyShape !== null ? 
-    html`<shaperone-form
+
+    let body = this.bodyShape !== null ?
+      html`<shaperone-form
       .id=${'body-form'}
       .shapes=${this.bodyShape}
       .resource=${this.resource}>
-    </shaperone-form>` 
-    : html``
+    </shaperone-form>`
+      : html``
 
     return html`
-      ${alignItemsVerticalCenter}
-      ${thinBorderBottom}
-      ${hoover}
+      ${alignItemsVerticalCenterCSS}
+      ${thinBorderBottomCSS}
+      ${hooverCSS}
+      ${fieldContainerCSS}
 
       <shaperone-form
         .id=${'header-form'}
@@ -142,7 +143,7 @@ export class SemanticForm extends LitElement {
 
       ${body}
         <button
-          class='thinBorderBottom alignItemsVerticalCenter hoover'
+          class='thinBorderBottom alignItemsVerticalCenter hoover fieldContainer'
           @click="${this.submitCallback}">
           <div>${paperPlane}</div>
           <div>Submit</div>
@@ -165,11 +166,11 @@ export class SemanticForm extends LitElement {
 
   private detectPropConflict() {
 
-    if(this.propConflictStrategy == 'ignore') return;
-    if(!this.bodyShape) return ;
-  
+    if (this.propConflictStrategy == 'ignore') return;
+    if (!this.bodyShape) return;
 
-    if(this.propConflictStrategy == 'keep-header') {
+
+    if (this.propConflictStrategy == 'keep-header') {
       // simply remove all the properties present in the header from the body
       this.bodyShape = this.bodyShape
         .deleteOut(ns.sh.property, this.headerShape.out(ns.sh.property))
@@ -178,28 +179,28 @@ export class SemanticForm extends LitElement {
     }
   }
 
-  private changeCallback(){
+  private changeCallback() {
     console.log("this.headerForm?.isValid ", this.headerForm?.isValid);
-    
-    
+
+
     let quadsWhereObjectIsEmptyString = this.resource?.dataset.match(null, null, literal(''))
     let resourceWithoutEmptyStrings = this.resource?.dataset;
     quadsWhereObjectIsEmptyString.quads.forEach(q => {
       resourceWithoutEmptyStrings.delete(q)
     });
   }
-      
-  private defaultResource() : AnyPointer {
+
+  private defaultResource(): AnyPointer {
     // notice that the resource needs to be of both types expected by the
     // header and body sape for validation to target it correctly
     const typeExpectedByHeader = this.headerShape.out(ns.sh.targetClass)
     const typeExpectedByBody = this.bodyShape?.out(ns.sh.targetClass)
-    
-    let result = clownface({dataset: dataset()})
+
+    let result = clownface({ dataset: dataset() })
       .namedNode(this.resourceURI.value.toString() + "/" + Math.floor(Math.random() * 999999))
       .addOut(ns.rdf.type, typeExpectedByHeader)
 
-    if(typeExpectedByBody){
+    if (typeExpectedByBody) {
       result.addOut(ns.rdf.type, typeExpectedByBody);
     }
     return result

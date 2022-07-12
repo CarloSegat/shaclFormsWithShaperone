@@ -5,67 +5,59 @@ import { taggedLiteral } from '@rdfjs-elements/lit-helpers/taggedLiteral.js';
 export * from '@hydrofoil/shaperone-wc/renderer/decorator';
 import { ns } from '../namespaces';
 import { plusIcon } from '../assets/icons/icons'
-import { alignItemsVerticalCenter, noBorders } from '../assets/style';
+import { alignItemsVerticalCenterCSS, noBordersCSS, fieldContainerCSS, hooverCSS } from '../assets/style';
 
 export function property(renderer, { property }) {
-        
+console.log("🚀 . property . property", typeof(property))
+console.log("🚀 . property . renderer", typeof(renderer))
+
     const { actions } = renderer
     const shapeNode = getThisShape();
 
-    let asterisk = generateHTMLAsteriskForMandatoryProp();
-    
-    let validationMessageHTML = generateHTMLValidationMessage();
+    const asteriskHTML = generateHTMLAsteriskForMandatoryProp();
 
+    const validationMessageHTML = generateHTMLValidationMessage();
 
-    const addRow = !property.selectedEditor && property.canAdd
-        ? html`<div>
-                <button 
-                    class='alignItemsVerticalCenter noBorders'
-                    style='margin-bottom: -1.5rem;'
-                    @click="${(e) => {
-                        e.preventDefault();
-                        actions.addObject()
-                    }}" title="Add value">
-                    <div>
-                        ${plusIcon} 
-                    </div>
-                    <div>
-                     <span'>Add ${property.name}</span>
-                    </div>
-                </button>
-            </div>`
-        : html``
+    const addButtonHTML = generateHTMLAddButton()
 
     return html`
-    ${alignItemsVerticalCenter}
-    ${noBorders}
-    ${addRow}
-    ${repeat(property.objects, object => html`
-        <style>
-            select {
-                display: inline !important;
-                width: 15rem;
-                height: 1.35rem;
-            }
-
-            .field {
-                margin: 1.5rem 0rem;
-            }
-        </style>
-        <div class="field">
-       
-        <div>
-            <div style='margin-bottom: 0.33rem;'>
-                <label for="${property.shape.id.value}">
-                    ${taggedLiteral(property.shape, { property: sh.name })}
-                </label>
-                ${asterisk}
-                ${validationMessageHTML}
+        ${alignItemsVerticalCenterCSS}
+        ${fieldContainerCSS}
+        ${noBordersCSS}
+        ${hooverCSS}
+        ${addButtonHTML}
+        ${repeat(property.objects, object => html`
+        
+            <div class="fieldContainer">
+                <div>
+                    <label for="${property.shape.id.value}">
+                        ${taggedLiteral(property.shape, { property: sh.name })}
+                    </label>
+                    ${asteriskHTML}
+                    ${validationMessageHTML}
+                </div>
+                ${renderer.renderObject({ object })}
             </div>
-            ${renderer.renderObject({ object })}
-            
-        </div>
-    </div>`)}`;
+        `)}`;
+
+    function generateHTMLAddButton() {
+        return !property.selectedEditor && property.canAdd
+            ? html`
+                <button 
+                    class='alignItemsVerticalCenter noBorders hoover'
+                    style='margin-bottom: -2rem;'
+                    @click="${(e) => {
+                    e.preventDefault();
+                    actions.addObject();
+                }}" 
+                    title="Add value">
+                        ${plusIcon} 
+                    <div>
+                        Add ${property.name}
+                    </div>
+                </button>`
+            : html``;
+    }
 
     function generateHTMLValidationMessage() {
         let validationMessageHTML = html``;

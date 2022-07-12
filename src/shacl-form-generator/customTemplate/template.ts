@@ -2,13 +2,10 @@
  * @packageDocumentation
  * @module @hydrofoil/shaperone-wc/templates
  */
-import { html, css } from 'lit';
+import { html } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
-import { sh } from '@tpluscode/rdf-ns-builders/strict';
 import { taggedLiteral } from '@rdfjs-elements/lit-helpers/taggedLiteral.js';
 export * from '@hydrofoil/shaperone-wc/renderer/decorator';
-import { turtle } from '@tpluscode/rdf-string'
-import { ns } from '../namespaces';
 import { property } from './property';
 import { object } from './object';
 /**
@@ -17,7 +14,7 @@ import { object } from './object';
 export const template = {
    
     editor: {
-        notFound: () => html`No editor found for property :(`,
+        notFound: () => html`No editor found for property`,
     },
     component: {
         notFound(editor) {
@@ -47,12 +44,12 @@ export const template = {
         return html`
         <style>
             input::part(invalid) {
-                border-color: red;
+                border-color: var(--error-red);
             }
             select::part(invalid) {
-                border-color: red;
+                border-color: var(--error-red);
             }
-                </style>
+        </style>
         <form>
             <div class="fieldset" part="focus-node">
                 ${repeat(focusNode.groups, group => renderer.renderGroup({ group }))}
