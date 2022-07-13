@@ -37,12 +37,13 @@ export class SemanticForm extends LitElement {
     }
 
   `;
+  
+  @property()
+  headerShape?: any;
 
   @property()
-  headerShape!: AnyPointer;
+  bodyShape!: AnyPointer;
 
-  @property()
-  bodyShape?: any;
 
   // DEFAULTED CONFIGS 
   @property({ reflect: true })
@@ -65,7 +66,7 @@ export class SemanticForm extends LitElement {
 
   protected shouldUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): boolean {
     // avoid rendering the component if props are not available
-    return this.headerShape !== null
+    return this.bodyShape !== null
   }
 
   protected async willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
@@ -99,8 +100,8 @@ export class SemanticForm extends LitElement {
         // TODO adding all the fetched RDF to the resource is not
         // efficient, instead a triple should be added only when the used
         // picks an item from the dropdown
-        this.headerShape.dataset.add(quad);
-        this.bodyShape?.dataset.add(quad);
+        this.bodyShape.dataset.add(quad);
+        this.headerShape?.dataset.add(quad);
         this.resource?.dataset.add(quad);
       }
     });
@@ -109,21 +110,23 @@ export class SemanticForm extends LitElement {
   private makeAllPropertiesReadonly() {
     // console.log("makeAllPropertiesReadonly");
 
-    this.headerShape
+    this.bodyShape
       .out(ns.sh.property)
       .addOut(ns.dash.readOnly, true)
 
-    this.bodyShape?.out(ns.sh.property)
+    this.headerShape?.out(ns.sh.property)
       .addOut(ns.dash.readOnly, true)
   }
   // Render the UI as a function of component state
   render() {
 
-    let body = this.bodyShape !== null ?
+    let headerHTML = this.headerShape !== null ?
       html`<shaperone-form
-      .id=${'body-form'}
-      .shapes=${this.bodyShape}
-      .resource=${this.resource}>
+      .id=${'header-form'}
+      .shapes=${this.headerShape}
+      .resource=${this.resource}
+      @changed=${this.changeCallback}
+      >
     </shaperone-form>`
       : html``
 
@@ -133,15 +136,15 @@ export class SemanticForm extends LitElement {
       ${hooverCSS}
       ${fieldContainerCSS}
 
+      ${headerHTML}
       <shaperone-form
-        .id=${'header-form'}
-        .shapes=${this.headerShape}
+        .id=${'body-form'}
+        .shapes=${this.bodyShape}
         .resource=${this.resource}
         @changed=${this.changeCallback}
       >
       </shaperone-form>
 
-      ${body}
         <button
           class='thinBorderBottom alignItemsVerticalCenter hoover fieldContainer'
           @click="${this.submitCallback}">
@@ -167,13 +170,13 @@ export class SemanticForm extends LitElement {
   private detectPropConflict() {
 
     if (this.propConflictStrategy == 'ignore') return;
-    if (!this.bodyShape) return;
+    if (!this.headerShape) return;
 
 
     if (this.propConflictStrategy == 'keep-header') {
       // simply remove all the properties present in the header from the body
-      this.bodyShape = this.bodyShape
-        .deleteOut(ns.sh.property, this.headerShape.out(ns.sh.property))
+      this.headerShape = this.headerShape
+        .deleteOut(ns.sh.property, this.bodyShape.out(ns.sh.property))
     } else {
       console.error("Invalid propConflictStrategy")
     }
@@ -193,14 +196,14 @@ export class SemanticForm extends LitElement {
   private defaultResource(): AnyPointer {
     // notice that the resource needs to be of both types expected by the
     // header and body sape for validation to target it correctly
-    const typeExpectedByHeader = this.headerShape.out(ns.sh.targetClass)
-    const typeExpectedByBody = this.bodyShape?.out(ns.sh.targetClass)
+    const typeExpectedByBody = this.bodyShape.out(ns.sh.targetClass)
+    const typeExpectedByHeader = this.headerShape?.out(ns.sh.targetClass)
 
     let result = clownface({ dataset: dataset() })
       .namedNode(this.resourceURI.value.toString() + "/" + Math.floor(Math.random() * 999999))
-      .addOut(ns.rdf.type, typeExpectedByHeader)
+      .addOut(ns.rdf.type, typeExpectedByBody)
 
-    if (typeExpectedByBody) {
+    if (typeExpectedByHeader) {
       result.addOut(ns.rdf.type, typeExpectedByBody);
     }
     return result

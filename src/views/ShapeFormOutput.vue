@@ -14,7 +14,7 @@
       <h2>Please add your pet</h2>
       <div style="padding: 0.25rem">
         <CreateNew
-          :headerShape="shapeClown"
+          :bodyShape="shapeClown"
           @form-submitted="(e) => setDataFromForm(e)"
         />
       </div>
